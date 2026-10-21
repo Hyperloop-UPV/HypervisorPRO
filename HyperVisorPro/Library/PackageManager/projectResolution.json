@@ -1,0 +1,515 @@
+{
+  "context": {
+    "projectPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Packages",
+    "unityVersion": "6000.6.4f1"
+  },
+  "inputs": [
+    "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Packages/manifest.json",
+    "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Packages/packages-lock.json",
+    "/home/noobi/Unity/Hub/Editor/6000.6.4f1/Editor/Data/Resources/PackageManager/BuiltInPackages/BuiltInPackagesCombined.sha1"
+  ],
+  "outputs": {
+    "com.unity.ai.navigation@2.0.14": {
+      "name": "com.unity.ai.navigation",
+      "displayName": "AI Navigation",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.ai.navigation@134dd6a3b97b",
+      "fingerprint": "134dd6a3b97bb75be809e267fbcd9c5071579dd2",
+      "editorCompatibility": "6000.0.0a1",
+      "version": "2.0.14",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.collab-proxy@2.13.6": {
+      "name": "com.unity.collab-proxy",
+      "displayName": "Unity Version Control",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4",
+      "fingerprint": "4628d2ba6ea45aaa16a8b78239d0f6f9c2176982",
+      "editorCompatibility": "6000.0.0a1",
+      "version": "2.13.6",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.ide.rider@3.0.38": {
+      "name": "com.unity.ide.rider",
+      "displayName": "JetBrains Rider Editor",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.ide.rider@1f60b3138684",
+      "fingerprint": "1f60b3138684c97af67aa8d911b1632ba916d29d",
+      "editorCompatibility": "2021.3.0a1",
+      "version": "3.0.38",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.ide.visualstudio@2.0.26": {
+      "name": "com.unity.ide.visualstudio",
+      "displayName": "Visual Studio Editor",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.ide.visualstudio@a99d56dec63f",
+      "fingerprint": "a99d56dec63ffb3a911a5a9bce9b77ba862a601c",
+      "editorCompatibility": "2021.3.0a1",
+      "version": "2.0.26",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.inputsystem@1.20.0": {
+      "name": "com.unity.inputsystem",
+      "displayName": "Input System",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.inputsystem@7a4e1a2a8194",
+      "fingerprint": "7a4e1a2a81941121ffc0721a14009b46299dada1",
+      "editorCompatibility": "6000.0.0a1",
+      "version": "1.20.0",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.render-pipelines.universal@17.6.0": {
+      "name": "com.unity.render-pipelines.universal",
+      "displayName": "Universal Render Pipeline",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.render-pipelines.universal@c6775e9427cb",
+      "fingerprint": "c6775e9427cb966417dd5a9037793c66b11949f9",
+      "version": "17.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.test-framework@1.8.0": {
+      "name": "com.unity.test-framework",
+      "displayName": "Test Framework",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.test-framework@33f8a1e9aefd",
+      "fingerprint": "33f8a1e9aefd70df9b79eced968f271c0a4b1c51",
+      "version": "1.8.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.timeline@6.6.0": {
+      "name": "com.unity.timeline",
+      "displayName": "Timeline",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.timeline@9cd41035b3ab",
+      "fingerprint": "9cd41035b3ab69ef5c3c1e89412414559852ca17",
+      "version": "6.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.ugui@2.6.0": {
+      "name": "com.unity.ugui",
+      "displayName": "uGUI",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.ugui@88d0d51315d3",
+      "fingerprint": "88d0d51315d3269ddd87da008f6e479280a55160",
+      "version": "2.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.visualscripting@1.9.12": {
+      "name": "com.unity.visualscripting",
+      "displayName": "Visual Scripting",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.visualscripting@4edfcc09512f",
+      "fingerprint": "4edfcc09512f786fe1a7f50476d320b36dab9676",
+      "editorCompatibility": "6000.0.0a1",
+      "version": "1.9.12",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.modules.accessibility@1.0.0": {
+      "name": "com.unity.modules.accessibility",
+      "displayName": "Accessibility",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.accessibility",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.adaptiveperformance@1.0.0": {
+      "name": "com.unity.modules.adaptiveperformance",
+      "displayName": "Adaptive Performance",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.adaptiveperformance",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.ai@1.0.0": {
+      "name": "com.unity.modules.ai",
+      "displayName": "AI",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.ai",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.androidjni@1.0.0": {
+      "name": "com.unity.modules.androidjni",
+      "displayName": "Android JNI",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.androidjni",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.animation@1.0.0": {
+      "name": "com.unity.modules.animation",
+      "displayName": "Animation",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.animation",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.assetbundle@1.0.0": {
+      "name": "com.unity.modules.assetbundle",
+      "displayName": "Asset Bundle",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.assetbundle",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.audio@1.0.0": {
+      "name": "com.unity.modules.audio",
+      "displayName": "Audio",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.audio",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.cloth@1.0.0": {
+      "name": "com.unity.modules.cloth",
+      "displayName": "Cloth",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.cloth",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.director@1.0.0": {
+      "name": "com.unity.modules.director",
+      "displayName": "Director",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.director",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.imageconversion@1.0.0": {
+      "name": "com.unity.modules.imageconversion",
+      "displayName": "Image Conversion",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.imageconversion",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.imgui@1.0.0": {
+      "name": "com.unity.modules.imgui",
+      "displayName": "IMGUI",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.imgui",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.jsonserialize@1.0.0": {
+      "name": "com.unity.modules.jsonserialize",
+      "displayName": "JSONSerialize",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.jsonserialize",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.particlesystem@1.0.0": {
+      "name": "com.unity.modules.particlesystem",
+      "displayName": "Particle System",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.particlesystem",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.physics@1.0.0": {
+      "name": "com.unity.modules.physics",
+      "displayName": "Physics",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.physics",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.physics2d@1.0.0": {
+      "name": "com.unity.modules.physics2d",
+      "displayName": "Physics 2D",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.physics2d",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.physicscore2d@1.0.0": {
+      "name": "com.unity.modules.physicscore2d",
+      "displayName": "Physics Core 2D",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.physicscore2d",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.screencapture@1.0.0": {
+      "name": "com.unity.modules.screencapture",
+      "displayName": "Screen Capture",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.screencapture",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.terrain@1.0.0": {
+      "name": "com.unity.modules.terrain",
+      "displayName": "Terrain",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.terrain",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.terrainphysics@1.0.0": {
+      "name": "com.unity.modules.terrainphysics",
+      "displayName": "Terrain Physics",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.terrainphysics",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.tetgen@1.0.0": {
+      "name": "com.unity.modules.tetgen",
+      "displayName": "Tetgen",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.tetgen",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.tilemap@1.0.0": {
+      "name": "com.unity.modules.tilemap",
+      "displayName": "Tilemap",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.tilemap",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.timelinefoundation@1.0.0": {
+      "name": "com.unity.modules.timelinefoundation",
+      "displayName": "Timeline Foundation",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.timelinefoundation",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.ui@1.0.0": {
+      "name": "com.unity.modules.ui",
+      "displayName": "UI",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.ui",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.uielements@1.0.0": {
+      "name": "com.unity.modules.uielements",
+      "displayName": "UIElements",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.uielements",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.umbra@1.0.0": {
+      "name": "com.unity.modules.umbra",
+      "displayName": "Umbra",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.umbra",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unityanalytics@1.0.0": {
+      "name": "com.unity.modules.unityanalytics",
+      "displayName": "Unity Analytics",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unityanalytics",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unitywebrequest@1.0.0": {
+      "name": "com.unity.modules.unitywebrequest",
+      "displayName": "Unity Web Request",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unitywebrequest",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unitywebrequestassetbundle@1.0.0": {
+      "name": "com.unity.modules.unitywebrequestassetbundle",
+      "displayName": "Unity Web Request Asset Bundle",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unitywebrequestaudio@1.0.0": {
+      "name": "com.unity.modules.unitywebrequestaudio",
+      "displayName": "Unity Web Request Audio",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unitywebrequestaudio",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unitywebrequesttexture@1.0.0": {
+      "name": "com.unity.modules.unitywebrequesttexture",
+      "displayName": "Unity Web Request Texture",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unitywebrequesttexture",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.unitywebrequestwww@1.0.0": {
+      "name": "com.unity.modules.unitywebrequestwww",
+      "displayName": "Unity Web Request WWW",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.unitywebrequestwww",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.vectorgraphics@1.0.0": {
+      "name": "com.unity.modules.vectorgraphics",
+      "displayName": "Vector Graphics",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.vectorgraphics",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.vehicles@1.0.0": {
+      "name": "com.unity.modules.vehicles",
+      "displayName": "Vehicles",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.vehicles",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.video@1.0.0": {
+      "name": "com.unity.modules.video",
+      "displayName": "Video",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.video",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.wind@1.0.0": {
+      "name": "com.unity.modules.wind",
+      "displayName": "Wind",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.wind",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.xr@1.0.0": {
+      "name": "com.unity.modules.xr",
+      "displayName": "XR",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.xr",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.subsystems@1.0.0": {
+      "name": "com.unity.modules.subsystems",
+      "displayName": "Subsystems",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.subsystems",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.modules.hierarchycore@1.0.0": {
+      "name": "com.unity.modules.hierarchycore",
+      "displayName": "Hierarchy Core",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.modules.hierarchycore",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.ext.nunit@2.1.0": {
+      "name": "com.unity.ext.nunit",
+      "displayName": "Custom NUnit",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.ext.nunit@508b95ff9afe",
+      "fingerprint": "508b95ff9afebba749610c6bac0176e4fbc0ba6e",
+      "version": "2.1.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.render-pipelines.core@17.6.0": {
+      "name": "com.unity.render-pipelines.core",
+      "displayName": "Scriptable Render Pipeline Core",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.render-pipelines.core@514690c4e8b0",
+      "fingerprint": "514690c4e8b00dbbe55a7c0cd51a99a3a6c83e06",
+      "version": "17.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.shadergraph@17.6.0": {
+      "name": "com.unity.shadergraph",
+      "displayName": "Shader Graph",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.shadergraph@03900dfca927",
+      "fingerprint": "03900dfca9276eff7c4b48f9c6accfef2e47a640",
+      "version": "17.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.render-pipelines.universal-config@17.6.0": {
+      "name": "com.unity.render-pipelines.universal-config",
+      "displayName": "Universal Render Pipeline Config",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.render-pipelines.universal-config@b1357eef5cd3",
+      "fingerprint": "b1357eef5cd35e78d8a372764090f16655a50a1d",
+      "version": "17.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.searcher@4.9.5": {
+      "name": "com.unity.searcher",
+      "displayName": "Searcher",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.searcher@a463122f2c00",
+      "fingerprint": "a463122f2c00f83398f41790942a0793431e70ea",
+      "editorCompatibility": "6000.0.0a1",
+      "version": "4.9.5",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.graph-authoring@1.0.0": {
+      "name": "com.unity.graph-authoring",
+      "displayName": "Graph Authoring",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.graph-authoring@f8926ccf2c8f",
+      "fingerprint": "f8926ccf2c8fe9afa7c1af7de1f013ddf7de6436",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.burst@2.0.0": {
+      "name": "com.unity.burst",
+      "displayName": "Burst",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.burst@c3ed5b778d56",
+      "fingerprint": "c3ed5b778d5629115f36f7c7fd174bfefbb658e4",
+      "version": "2.0.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.collections@6.6.0": {
+      "name": "com.unity.collections",
+      "displayName": "Collections",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.collections@431b1d558060",
+      "fingerprint": "431b1d55806010480fc75188f686a2566eacfb66",
+      "version": "6.6.0",
+      "source": "builtin",
+      "testable": false
+    },
+    "com.unity.profiling.core@1.0.3": {
+      "name": "com.unity.profiling.core",
+      "displayName": "Unity Profiling Core API",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.profiling.core@8a49f7027d06",
+      "fingerprint": "8a49f7027d0618e2cb86aa9e4ed5fb4392e8121a",
+      "editorCompatibility": "2020.1.0a1",
+      "version": "1.0.3",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.nuget.mono-cecil@1.11.6": {
+      "name": "com.unity.nuget.mono-cecil",
+      "displayName": "Mono Cecil",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff",
+      "fingerprint": "ecb9724e46fff855c46a4f37f0a3377a3cfffc06",
+      "editorCompatibility": "2019.4.0a1",
+      "version": "1.11.6",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.test-framework.performance@6.6.0": {
+      "name": "com.unity.test-framework.performance",
+      "displayName": "Performance testing API",
+      "resolvedPath": "/home/noobi/Documents/okcomput3r (Git)/HypervisorPRO/Library/PackageCache/com.unity.test-framework.performance@530c2523cea5",
+      "fingerprint": "530c2523cea5530243ee2d84af4fb4c8639fe6fe",
+      "version": "6.6.0",
+      "source": "builtin",
+      "testable": false
+    }
+  }
+}

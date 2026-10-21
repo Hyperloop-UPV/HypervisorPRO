@@ -1,0 +1,7 @@
+{
+  "name": "com.unity.graph-authoring",
+  "displayName": "Graph Authoring",
+  "version": "1.0.0",
+  "description": "Shared graph tooling for Shader Graph and Visual Effect Graph.",
+  "_fingerprint": "f8926ccf2c8fe9afa7c1af7de1f013ddf7de6436"
+}

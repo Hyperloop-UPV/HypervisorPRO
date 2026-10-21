@@ -1,0 +1,8 @@
+{
+  "name": "com.unity.burst",
+  "displayName": "Burst",
+  "version": "2.0.0",
+  "type": "shim",
+  "description": "Burst is a compiler that translates from IL/.NET bytecode to highly optimized native code using LLVM.",
+  "_fingerprint": "c3ed5b778d5629115f36f7c7fd174bfefbb658e4"
+}
