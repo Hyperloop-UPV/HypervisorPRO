@@ -144,7 +144,7 @@ Transform:
   m_GameObject: {fileID: 46593764}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01481, y: -0.40081, z: -0.01626}
+  m_LocalPosition: {x: 0, y: 0.36, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -303,7 +303,7 @@ Transform:
   m_GameObject: {fileID: 682556881}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01481, y: -0.36, z: -0.01626}
+  m_LocalPosition: {x: 0, y: 0, z: 20.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -417,7 +417,7 @@ Transform:
   m_GameObject: {fileID: 1002649768}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.01481, y: 0.40081, z: -22.67374}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 5.5115}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -555,7 +555,7 @@ Transform:
   m_GameObject: {fileID: 1007128476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -30.46}
+  m_LocalPosition: {x: 2.83, y: 1, z: -14.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -667,7 +667,7 @@ Transform:
   m_GameObject: {fileID: 1326655888}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51481, y: -0.64418995, z: 0.01626}
+  m_LocalPosition: {x: -0.42, y: -0.64418995, z: 0.01626}
   m_LocalScale: {x: 0.1328125, y: 1, z: 51.227497}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -682,9 +682,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1352976632}
+  - component: {fileID: 1352976633}
   - component: {fileID: 1352976631}
+  - component: {fileID: 1352976634}
   m_Layer: 0
-  m_Name: CameraController
+  m_Name: SceneController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -703,9 +705,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   mainCamera: {fileID: 1007128476}
+  podPosition: {fileID: 46593765}
   sceneSettings:
-  - {fileID: 11400000, guid: 3a3c7560c9dc0aab0bac85e72382a183, type: 2}
+  - {fileID: 11400000, guid: 0e032485fb3138546ba02fa44c584c6c, type: 2}
   - {fileID: 11400000, guid: 6e9cc8f8443e6d8eda6c98c0599d0cbe, type: 2}
+  - {fileID: 11400000, guid: 3a3c7560c9dc0aab0bac85e72382a183, type: 2}
+  transitionTime: 0.8
+  lockInTransition: 0
+  sceneCount: 0
 --- !u!4 &1352976632
 Transform:
   m_ObjectHideFlags: 0
@@ -721,6 +728,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1352976633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352976630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b0d8a74fe1f234eaa30861a5fdd140, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputController
+  transitionToNewScene:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1352976631}
+        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
+        m_MethodName: TransitionToNewscene
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1352976634}
+        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
+        m_MethodName: TransitionToNewScene
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1352976634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352976630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e8bee5a246f4e54e80c169252e0836a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneController
+  podPosition: {fileID: 46593765}
+  mockLevitationOffset_mm: 70
+  mockLevitationOscilationOffset_mm: 136.8
+  mockLevittionOscilationSpeed: 1
+  mockLevitationInitializationTime: 2.07
+  mockPodMaxVelocity: 20
+  mockPodAcceleration: 1
+  lockInScene: 0
 --- !u!1 &1937432719
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,7 +1005,7 @@ Transform:
   m_GameObject: {fileID: 1943885333}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.48519, y: -0.64418995, z: 0.01626}
+  m_LocalPosition: {x: 0.42, y: -0.64418995, z: 0.01626}
   m_LocalScale: {x: 0.1328125, y: 1, z: 51.227497}
   m_ConstrainProportionsScale: 0
   m_Children: []

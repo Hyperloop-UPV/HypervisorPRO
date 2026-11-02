@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbe34b45ab518d50bb41838bdd6a04ca, type: 3}
-  m_Name: En Funcionamiento
+  m_Name: Parado
   m_EditorClassIdentifier: Assembly-CSharp::SceneData
-  sceneName: En Funcionamiento
-  freeCam: 0
-  trainStartPos: {x: 0, y: 0, z: 0}
-  cameraStartPos: {x: 0, y: 0, z: 0}
-  cameraFocusPoint: {x: 0, y: 0, z: 0}
+  sceneId: 0
+  sceneName: Pod Parado
+  cameraDistanceToFocusPoint: 5
+  cameraFOV: 60
+  camearAngleX: 180
+  cameraAngleY: 137

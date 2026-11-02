@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbe34b45ab518d50bb41838bdd6a04ca, type: 3}
-  m_Name: Levitando
+  m_Name: Solo chasis
   m_EditorClassIdentifier: Assembly-CSharp::SceneData
-  sceneName: Levitando
-  freeCam: 0
-  trainStartPos: {x: 0, y: 0, z: 0}
-  cameraStartPos: {x: 0, y: 0, z: 0}
-  cameraFocusPoint: {x: 0, y: 0, z: 0}
+  sceneId: 4
+  sceneName: Solo Chasis
+  cameraDistanceToFocusPoint: 20
+  camearAngleX: 80
+  cameraAngleY: 70
