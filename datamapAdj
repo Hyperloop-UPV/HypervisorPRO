@@ -1,0 +1,506 @@
+///////////////////////////////////////
+//    INFORMACIÓN GENERAL DEL POD    //
+///////////////////////////////////////
+
+Data Types:
+
+  - message_ids : uint64
+
+      fault : 10
+      info  : 12
+      panic : 13
+      blcu_ack    : 4
+      state_space : 7
+      remove_state_order : 6
+      add_state_order    : 5
+
+  - units : conversion units
+
+      m/ss  : *1,
+      Hz    : *1,
+      MOhm  : *1000000,
+      ºC    : +273.15,
+      deg   : /57.2957,
+      km/h  : *3.6,
+      ns    : *1,
+      m/s   : *1,
+      rad   : *1,
+      A     : *1,
+      %     : /100,
+      m     : *1,
+      mrad  : /1000,
+      KOhm  : *1000,
+      V     : *1,
+      mV    : /1000,
+      Ohm   : *1,
+      mm    : /1000,
+      G     : *9.8,
+      bar   : *1,
+      s     : *1
+
+Boards :
+
+  - VCU
+  - LCU
+  - PCU
+  - HVBMS
+
+  - BLCU
+
+
+
+///////////////////////////////////////
+// INFORMACIÓN ESPECíFICA POR PLACAS //
+///////////////////////////////////////
+
+// nota: es posible que el orden de los enums se encuentre desordenado (posible bug venidero)
+
+
+
+
+/////////////
+//  HVBMS  //
+/////////////
+
+> HVBMS :
+
+  - Descripción :
+
+  Esta es la placa encargada de conocer el estado de todas las baterías del pod, y se encarga de administrar
+  corriente a todos los componentes del pod. Tiene una máquina de estados que controla la cantidad de corriente
+  que pueden recibir los componentes en función del estado.
+
+  El pod tine un total de 8 baterias, compuestas por 12 células cada una.
+
+  [] measurements :
+
+      # contactor :
+      {
+          - contactor_precharge   : 1 byte (bool)
+          - contactor_discharge   : 1 byte (bool)
+          - contactor_high        : 1 byte (bool)
+          - contactor_low         : 1 byte (bool)
+          - contactor_common_high : 1 byte (bool)
+      }
+
+      # imd :
+      {
+          - imd_status : 1 byte (enum)
+            [
+               SHORTCIRCUIT    : 1
+               NORMAL          : 2
+               UNDERVOLTAGE    : 3
+               FAST_EVAL       : 4
+               GROUNDING_FAULT : 5
+            ]
+
+          - imd_is_ok      : 1 byte (bool)
+          - imd_resistance : 4 bytes (float32) -> "MOhm"
+          - imd_duty       : 4 bytes (float32)
+          - imd_freq       : 4 bytes (float32)
+
+      }
+
+      # battery [8] :
+      {
+          - total_battery_volt : 4 bytes (float32) -> "V"
+          - cell_volt   [12]   : 4 bytes (float32) -> "V"
+          - battery_temp [4]   : 4 bytes (float32)  -> "ºC"
+      }
+
+      // máquina de estado general
+      - sm_status : 1 byte (enum) :
+        [
+           Connecting          : 1
+           Idle                : 2
+           Ready To Precharge  : 3
+           Precharging         : 4
+           Energized           : 5
+           FAULT               : 6
+        ]
+
+
+
+      // variables de control de rangos
+
+      - voltage_min : 4 bytes (float32) -> "V"
+      - voltage_max : 4 bytes (float32) -> "V"
+      - temp_min    : 4 bytes (float32) -> "ºC"
+      - temp_max    : 4 bytes (float32) -> "ºC"
+
+
+      // variables de lectura de datos
+
+      - batteries_voltage_reading : 4 bytes (float32) -> "V"
+      - voltage_reading : 4 bytes (float32) -> "V"
+      - current_reading : 4 bytes (float32) -> "A"
+
+      - sdc_status : 1 byte (enum)
+        [
+           ENGAGED    : 1
+           DISENGAGED : 2
+        ]
+
+      - soc : 4 bytes (float32) ??? ni idea de lo que es el soc
+
+  // end of measurements
+
+
+  [] orders:
+
+      - FAULT             (id 2000) : 8 bytes (uint64)
+      - Cell Balance      (id 2001) : 8 bytes (uint64)
+      - Open Contractors  (id 2002) : 8 bytes (uint64)
+      - Start Precharge   (id 2003) : 8 bytes (uint64)
+      - Check Faults      (id 2004) : 8 bytes (uint64)
+
+  // end of orders
+
+
+  [] packets:
+
+      # high voltage system
+      {
+          - id      : 2161
+          - content : 29 bytes (32 bytes alligned)
+            [
+                voltage_min                : 4 bytes (float32)
+                voltage_max                : 4 bytes (float32)
+                temp_min                   : 4 bytes (float32)
+                temp_max                   : 4 bytes (float32)
+                current_reading            : 4 bytes (float32)
+                voltage_reading            : 4 bytes (float32)
+                batteries_voltage_reading  : 4 bytes (float32)
+                sm_status                  : 1 byte (enum)
+            ]
+
+      }
+
+      # high voltage batteries
+      {
+          - id      : 2164
+          - content : 272 bytes -> 68 bytes (per battery)
+
+            [
+                battery1_cell1         : 4 bytes (float32)
+                battery1_cell2         : 4 bytes (float32)
+
+                ...
+
+                battery1_cell12        : 4 bytes (float32)
+                battery1_total_voltage : 4 bytes (float32)
+                battery1_temp1         : 4 bytes (float32)
+
+                ...
+
+                battery1_temp4         : 4 bytes (float32)
+                battery2_cell1         : 4 bytes (float32)
+
+                ...
+
+                battery1_temp4         : 4 bytes (float32)
+            ]
+
+      }
+
+      # SOC
+      {
+          - id      : 2162
+          - content : 4 bytes
+            [
+                soc : 4 bytes (float32)
+            ]
+      }
+
+      # SDC
+      {
+          - id      : 2163
+          - content : 1 byte
+            [
+                sdc_status :  1 byte (enum)
+            ]
+      }
+
+      # IMD
+      {
+          - id      : 2165
+          - content : 14 bytes (20 bytes alligned)
+            [
+                imd_status     : 1 byte (enum)
+                imd_resistance : 4 bytes (float32)
+                imd_is_ok      : 1 byte (bool)
+                imd_duty       : 4 bytes (float32)
+                imd_freq       : 4 bytes (float32)
+            ]
+      }
+
+      # contactor status
+      {
+          - id      : 2166
+          - content : 5 bytes
+          [
+                contactor_discharge   : 1 byte (bool)
+                contactor_precharge   : 1 byte (bool)
+                contactor_low         : 1 byte (bool)
+                contactor_high        : 1 byte (bool)
+                contactor_common_high : 1 byte (bool)
+          ]
+      }
+
+
+  // end of packets
+
+
+
+
+/////////////
+//   LCU   //
+/////////////
+
+
+> LCU (Levitation Control unit)
+
+  - Descripción :
+
+    Esta es la placa encargada del control de la levitación del pod.
+
+    [] measurements :
+
+        - master_state_machine : 1 byte (enum)
+          [
+              Connecting
+              Idle
+              Levitating
+              Current Control
+              Debug
+              Fault
+          ]
+
+        - slave_state_machine : 1 byte (enum)
+          [
+              SPI Connecting
+              Idle
+              Levitating
+              Current Control
+              Debug
+              Fault
+          ]
+
+        - desired_current  : 4 bytes (float32) -> "A"
+        - fixed_vbat       : 4 bytes (float32) -> "V"
+        - desired_distance : 4 bytes (float32) -> "mm"
+        - lpu_id           : 4 bytes (uint32)
+
+        - fixed_pwm_duty_cycle : 4 bytes (float32) -> "%"
+        - pwm_duty_cycle [10]  : 4 bytes (float32) -> "%"
+        - coil_current   [10]  : 4 bytes (float32) -> "A"
+
+        - airgap [8]  : 4 bytes (float32) -> "mm"
+        - cinema_current : 4 bytes (float32) // no es corriente
+
+        # control
+        {
+            - ctrl_gap_local    [4] : 4 bytes (float32)
+            - ctrl_voltage     [10] : 4 bytes (float32)
+            - ctrl_state        [5] : 4 bytes (float32)
+            - ctrl_current_ref [10] : 4 bytes (float32)
+            - ctrl_fe   [3] : 4 bytes (float32)
+            - ctrl_fa   [4] : 4 bytes (float32)
+            - ctrl_ef   [3] : 4 bytes (float32)
+            - ctrl_p    [3] : 4 bytes (float32)
+            - ctrl_r    [3] : 4 bytes (float32)
+            - ctrl_zz   [3] : 4 bytes (float32)
+            - ctrl_fe_l [3] : 4 bytes (float32)
+            - ctrl_referencia     : 4 bytes (float32)
+            - ctrl_i_hems_out [4] : 4 bytes (float32)
+            - ctrl_a       [8] : 4 bytes (float32)
+            - ctrl_ak      [4] : 4 bytes (float32)
+            - ctrl_bk      [3] : 4 bytes (float32)
+            - ctrl_pi_hems [4] : 4 bytes (float32)
+            - ctrl_pi_ems  [6] : 4 bytes (float32)
+        }
+
+    // end of measurements
+
+
+    [] orders:
+
+      - FAULT                     (id 800) : 8 bytes (uint64)
+      - Stop                      (id 801) : 8 bytes (uint64)
+      - Set Fixed VBAT            (id 802) : 8 bytes (uint64)
+      - Unset Fixed VBAT          (id 803) : 8 bytes (uint64)
+      - Levitate                  (id 804) : 8 bytes (uint64)
+      - Levitate Ramp             (id 805) : 8 bytes (uint64)
+      - Set Desired Distance      (id 806) : 8 bytes (uint64)
+      - Set Desired Distance Ramp (id 807) : 8 bytes (uint64)
+      - Stop Ramp                 (id 808) : 8 bytes (uint64)
+      - Current Control           (id 809) : 8 bytes (uint64)
+      - All Current Control       (id 810) : 8 bytes (uint64)
+      - Stop Current Control      (id 811) : 8 bytes (uint64)
+      - PWM                       (id 812) : 8 bytes (uint64)
+      - All PWM                   (id 813) : 8 bytes (uint64)
+      - Stop PWM                  (id 814) : 8 bytes (uint64)
+      - Reset All                 (id 815) : 8 bytes (uint64)
+      - Reset Slave               (id 816) : 8 bytes (uint64)
+      - Cinema                    (id 817) : 8 bytes (uint64)
+      - Stop Cinema               (id 818) : 8 bytes (uint64)
+      - Check Faults              (id 819) : 8 bytes (uint64)
+
+    // end of orders
+
+
+    [] packets:
+
+        # LPU PWM Duties
+        {
+            - id : 936
+            - content : 40 bytes
+              [
+                  pwm_duty_cycle_1
+                  pwm_duty_cycle_2
+                  pwm_duty_cycle_3
+                  pwm_duty_cycle_4
+                  pwm_duty_cycle_5
+                  pwm_duty_cycle_6
+                  pwm_duty_cycle_7
+                  pwm_duty_cycle_8
+                  pwm_duty_cycle_9
+                  pwm_duty_cycle_10
+              ]
+        }
+
+        # LPU Coil Currents
+        {
+            - id : 937
+            - content : 40 bytes
+              [
+                  coil_current_1
+                  coil_current_2
+                  coil_current_3
+                  coil_current_4
+                  coil_current_5
+                  coil_current_6
+                  coil_current_7
+                  coil_current_8
+                  coil_current_9
+                  coil_current_10
+              ]
+        }
+
+        # Airgaps
+        {
+            - id : 938
+            - content : 32 bytes
+              [
+                  airgap_1
+                  airgap_2
+                  airgap_3
+                  airgap_4
+                  airgap_5
+                  airgap_6
+                  airgap_7
+                  airgap_8
+              ]
+        }
+
+        # State Machine
+        {
+            - id : 939
+            - content : 2 bytes
+              [
+                  master_state_machine
+                  slave_state_machine
+              ]
+        }
+
+        # General State
+        {
+            - id      : 940
+            - content : 320 bytes
+              [
+                  ctrl_voltage      [10]
+                  ctrl_gap_local    [4]
+                  ctrl_state        [5]
+                  ctrl_current_ref  [10]
+                  ctrl_fe    [3]
+                  ctrl_fa    [4]
+                  ctrl_ef    [3]
+                  ctrl_p     [3]
+                  ctrl_r     [3]
+                  ctrl_zz    [3]
+                  ctrl_fe_l  [3]
+                  ctrl_referencia
+                  ctrl_i_hems_out   [4]
+                  ctrl_a        [8]
+                  ctrl_ak       [4]
+                  ctrl_bk       [3]
+                  ctrl_pi_hems  [4]
+                  ctrl_pi_ems   [6]
+              ]
+        }
+
+    // end of packets
+
+
+
+/////////////
+//   PCU   //
+/////////////
+
+> PCU :
+
+
+
+
+/////////////
+//   VCU   //
+/////////////
+
+> VCU :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define element (type, variable)
+#define PARSE_MESSAGE( packet,
+                       element1,
+                       element2,
+                       ...
+                       elementn)
+offset = 0
+for each (packet([size, variable]))
+{
+    variable1 = message[offset];
+    offset += size
+}
+#undefine packet
+
+
+// de esta forma se puede cambiar facilmente la estructura del mensaje si llega a cambiar en un futuro
+// ej. :
+
+void parse_pod_v11(byte *message){
+  assert(message == nullptr);
+
+  PARSE_MESSAGE( <message structure of pod 11> );
+
+}
+
+void parse_pod_v12(byte *message){
+  assert(message == nullptr);
+
+  PARSE_MESSAGE( <message structure of pod 12> );
+
+}
+
+// 
