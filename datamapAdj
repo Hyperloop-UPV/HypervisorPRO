@@ -4,50 +4,56 @@
 
 Data Types:
 
-  - message_ids : uint64
-
-      fault : 10
-      info  : 12
-      panic : 13
-      blcu_ack    : 4
-      state_space : 7
-      remove_state_order : 6
-      add_state_order    : 5
+  - message_ids : uint32
+    [
+        fault : 10
+        info  : 12
+        panic : 13
+        blcu_ack    : 4
+        state_space : 7
+        remove_state_order : 6
+        add_state_order    : 5
+    ]
 
   - units : conversion units
+    [
+        m/ss  : *1,
+        Hz    : *1,
+        MOhm  : *1000000,
+        ºC    : +273.15,
+        deg   : /57.2957,
+        km/h  : *3.6,
+        ns    : *1,
+        m/s   : *1,
+        rad   : *1,
+        A     : *1,
+        %     : /100,
+        m     : *1,
+        mrad  : /1000,
+        KOhm  : *1000,
+        V     : *1,
+        mV    : /1000,
+        Ohm   : *1,
+        mm    : /1000,
+        G     : *9.8,
+        bar   : *1,
+        s     : *1
+    ]
 
-      m/ss  : *1,
-      Hz    : *1,
-      MOhm  : *1000000,
-      ºC    : +273.15,
-      deg   : /57.2957,
-      km/h  : *3.6,
-      ns    : *1,
-      m/s   : *1,
-      rad   : *1,
-      A     : *1,
-      %     : /100,
-      m     : *1,
-      mrad  : /1000,
-      KOhm  : *1000,
-      V     : *1,
-      mV    : /1000,
-      Ohm   : *1,
-      mm    : /1000,
-      G     : *9.8,
-      bar   : *1,
-      s     : *1
-
-Boards :
-
-  - VCU
-  - LCU
-  - PCU
-  - HVBMS
-
-  - BLCU
+  - Boards :
+    [
+        BLCU
+        VCU
+        LCU
+        PCU
+        HVBMS
+    ]
 
 
+  - estructura de trama :
+    [
+
+    ]
 
 ///////////////////////////////////////
 // INFORMACIÓN ESPECíFICA POR PLACAS //
@@ -55,7 +61,70 @@ Boards :
 
 // nota: es posible que el orden de los enums se encuentre desordenado (posible bug venidero)
 
+/////////////
+//   BLCU  //
+/////////////
 
+> BLCU :
+
+    - Descripción :
+
+    Esta es la placa encargada de Coordinar el resto de placas para, mediante una máquina de estados,
+    así como coordinar la actualización de las placas (flashing).
+
+    [] measurements :
+
+        - target : 1 byte (enum)
+          [
+              VCU
+              HVBMS
+              LVBMS // deprecado?
+              PCU
+              LCU
+          ]
+
+        - general_state_machine : 1 byte (enum)
+          [
+              Connecting
+              Operational
+              Fault
+          ]
+
+        - operational_state_machine : 1 byte (enum)
+          [
+              Idle
+              Flashing
+          ]
+
+    [] orders:
+
+          - Reset All     (id 701) : 4 bytes (uint32)
+          - Write Program (1d 700) : 4 bytes (uint32)
+
+    // end of orders
+
+
+    [] packets:
+
+          # ack
+          {
+              - id : 3
+          }
+
+          # nack
+          {
+              - id : 4
+          }
+
+          # state_machine_state
+          {
+              - id : 1
+              - content : 2 bytes
+                [
+                      - general_state_machine     : 1 byte (enum)
+                      - operational_state_machine : 1 byte (enum)
+                ]
+          }
 
 
 /////////////
@@ -148,11 +217,11 @@ Boards :
 
   [] orders:
 
-      - FAULT             (id 2000) : 8 bytes (uint64)
-      - Cell Balance      (id 2001) : 8 bytes (uint64)
-      - Open Contractors  (id 2002) : 8 bytes (uint64)
-      - Start Precharge   (id 2003) : 8 bytes (uint64)
-      - Check Faults      (id 2004) : 8 bytes (uint64)
+      - FAULT             (id 2000) : 4 bytes (uint32)
+      - Cell Balance      (id 2001) : 4 bytes (uint32)
+      - Open Contractors  (id 2002) : 4 bytes (uint32)
+      - Start Precharge   (id 2003) : 4 bytes (uint32)
+      - Check Faults      (id 2004) : 4 bytes (uint32)
 
   // end of orders
 
@@ -325,26 +394,26 @@ Boards :
 
     [] orders:
 
-      - FAULT                     (id 800) : 8 bytes (uint64)
-      - Stop                      (id 801) : 8 bytes (uint64)
-      - Set Fixed VBAT            (id 802) : 8 bytes (uint64)
-      - Unset Fixed VBAT          (id 803) : 8 bytes (uint64)
-      - Levitate                  (id 804) : 8 bytes (uint64)
-      - Levitate Ramp             (id 805) : 8 bytes (uint64)
-      - Set Desired Distance      (id 806) : 8 bytes (uint64)
-      - Set Desired Distance Ramp (id 807) : 8 bytes (uint64)
-      - Stop Ramp                 (id 808) : 8 bytes (uint64)
-      - Current Control           (id 809) : 8 bytes (uint64)
-      - All Current Control       (id 810) : 8 bytes (uint64)
-      - Stop Current Control      (id 811) : 8 bytes (uint64)
-      - PWM                       (id 812) : 8 bytes (uint64)
-      - All PWM                   (id 813) : 8 bytes (uint64)
-      - Stop PWM                  (id 814) : 8 bytes (uint64)
-      - Reset All                 (id 815) : 8 bytes (uint64)
-      - Reset Slave               (id 816) : 8 bytes (uint64)
-      - Cinema                    (id 817) : 8 bytes (uint64)
-      - Stop Cinema               (id 818) : 8 bytes (uint64)
-      - Check Faults              (id 819) : 8 bytes (uint64)
+      - FAULT                     (id 800) : 4 bytes (uint32)
+      - Stop                      (id 801) : 4 bytes (uint32)
+      - Set Fixed VBAT            (id 802) : 4 bytes (uint32)
+      - Unset Fixed VBAT          (id 803) : 4 bytes (uint32)
+      - Levitate                  (id 804) : 4 bytes (uint32)
+      - Levitate Ramp             (id 805) : 4 bytes (uint32)
+      - Set Desired Distance      (id 806) : 4 bytes (uint32)
+      - Set Desired Distance Ramp (id 807) : 4 bytes (uint32)
+      - Stop Ramp                 (id 808) : 4 bytes (uint32)
+      - Current Control           (id 809) : 4 bytes (uint32)
+      - All Current Control       (id 810) : 4 bytes (uint32)
+      - Stop Current Control      (id 811) : 4 bytes (uint32)
+      - PWM                       (id 812) : 4 bytes (uint32)
+      - All PWM                   (id 813) : 4 bytes (uint32)
+      - Stop PWM                  (id 814) : 4 bytes (uint32)
+      - Reset All                 (id 815) : 4 bytes (uint32)
+      - Reset Slave               (id 816) : 4 bytes (uint32)
+      - Cinema                    (id 817) : 4 bytes (uint32)
+      - Stop Cinema               (id 818) : 4 bytes (uint32)
+      - Check Faults              (id 819) : 4 bytes (uint32)
 
     // end of orders
 
@@ -449,14 +518,289 @@ Boards :
 
 > PCU :
 
+  - Descripción :
+
+    Ni idea hulio (preguntar luego), pero  al parecer tiene información importante sobre la velocidad
+    del pod que se puede emplear para la simulación
+
+  [] measurements :
+
+      # A
+      {
+          - voltage_battery_a : 4 bytes (float32)
+          - current_sensor_u_a : 4 bytes (float32) -> A
+          - current_sensor_v_a : 4 bytes (float32) -> A
+          - current_sensor_w_a : 4 bytes (float32) -> A
+          - gd_fault_a : 1 byte (bool)
+          - gd_ready_a : 1 byte (bool)
 
 
+      }
+    
+      # B
+      {
+          - voltage_battery_b : 4 bytes (float32)
+          - current_sensor_u_b : 4 bytes (float32) -> A
+          - current_sensor_v_b : 4 bytes (float32) -> A
+          - current_sensor_w_b : 4 bytes (float32) -> A
+          - gd_fault_b : 1 byte (bool)
+          - gd_ready_b : 1 byte (bool)
+
+      }
+
+      # speed (importante)
+      {
+          - slip_motor     : 4 bytes (float32) -> %
+          - imu_speed_km_h : 8 bytes (float64) -> km/h
+          - imu_position_m : 4 bytes (float32) -> m
+          - speed_ref      : 4 bytes (float32) -> km/h
+          - target_speed   : 4 bytes (float32) -> km/h
+          - speed_error    : 8 bytes (float64) -> km/h
+          - svpwm_time     : 4 bytes (float32) -> s
+
+      }
+
+      - state : 1 byte (enum)
+        [
+            Connecting
+            Idle
+            Accelerating
+            Fault
+        ]
+
+      - v_ref           : 4 bytes (float32
+      - vmax            : 4 bytes (float32) -> V
+      - target_voltage  : 4 bytes (float32) -> V
+      - current_ref     : 4 bytes (float32) -> A
+      - current_peak    : 4 bytes (float32) -> A
+      - actual_current_ref  : 4 bytes (float32) -> A
+      - error_pi            : 4 bytes (float32) -> A // nota: según el adj esto es el error de corriente
+
+      - frequenzy               : 4 bytes (uint32)  -> Hz
+      - modulation_frequenzy    : 4 bytes (float32) -> Hz
+      - frequenzy_to_send_svpwm : 4 bytes (float32) -> Hz // nota: variable duplicada con ids 567 y 577
+      - frequenzy_to_send_pwm   : 4 bytes (float32) -> Hz // nota: variable duplicada con ids 568 y 578
+      - vf_control              : 1 byte  (bool) // variable del control de frecuencia
+
+      - duty_u : 4 bytes (float32) -> %
+      - duty_v : 4 bytes (float32) -> %
+      - duty_w : 4 bytes (float32) -> %
+
+      - imod : 4 bytes (float32) // modulation index??
+  
+  // end of measurements
+
+  [] orders:
+
+      - FAULT                   (id 512) : 4 bytes (uint32)
+      - Start SVPWM             (id 513) : 4 bytes (uint32)
+      - Stop Motor              (id 514) : 4 bytes (uint32)
+      - Send Reference Current  (id 515) : 4 bytes (uint32)
+      - Zeroing                 (id 516) : 4 bytes (uint32)
+      - Send Reference Speed    (id 517) : 4 bytes (uint32) // manda la velocidad de referencia "speed_ref", junto a la "frequenzy_to_send_svpwm" y "vmax"
+
+  // end of orders
+
+
+  [] packets:
+
+      # PWM
+        {
+            - id : 550
+            - content : 20 bytes
+              [
+                  frequenzy
+                  modulation_frequenzy
+                  duty_u
+                  duty_v
+                  duty_w
+              ]
+        }
+
+      # Batteries Voltage // por que hay tantos paquetes del voltage de las baterias man????
+        {
+            - id : 551
+            - content : 8 bytes
+              [
+                  voltage_battery_a
+                  voltage_battery_b
+              ]
+        }
+
+      # Current Sensors
+        {
+            - id : 552
+            - content : 44 bytes
+              [
+                  current_sensor_u_a
+                  current_sensor_v_a
+                  current_sensor_w_a
+                  current_sensor_u_b
+                  current_sensor_v_b
+                  current_sensor_w_b
+                  current_Peak
+                  error_pi
+                  target_voltage
+                  svpwm_time
+                  imod
+              ]
+        }
+
+     # State Machine States
+        {
+            - id : 553
+            - content : 1 byte
+              [
+                  state
+              ]
+        }
+
+      # Speed Data (IMPORTANTE)
+        {
+            - id : 555
+            - content : 32 bytes
+              [
+                  target_speed
+                  speed_error
+                  actual_current_ref
+                  slip_motor
+                  imu_speed_km_h
+                  imu_position_m
+              ]
+        }
+
+      # Gate Driver Reporting
+        {
+            - id : 558
+            - content : 4 bytes
+              [
+                  gd_fault_a
+                  gd_fault_b
+                  gd_ready_a
+                  gd_ready_b
+              ]
+        }
 
 /////////////
 //   VCU   //
 /////////////
 
 > VCU :
+
+  - Descripción :
+
+  Tengo entendido que este elemento coordina los paquetes que entren y salen a/desde las placas
+  para que lleguen a la vez. Además parece ser que controla la refigeración líquida de los componentes
+
+  [] measurements :
+
+      - state : 1 byte (enum)
+        [
+            Idle
+            Connected
+            Maintenance
+            Precharging
+            HVActive
+            Ready
+            Propulsion
+            Static Levitation
+            Dynamic Levitation
+        ]
+
+      - brakes_status : 1 byte (enum)
+        [
+            BRAKED
+            UNBRAKED
+        ]
+
+      - sdc_closed           : 1 byte (bool)
+      - pcu_connected        : 1 byte (bool)
+      - lcu_connected        : 1 byte (bool)
+      - hvmbs_connected      : 1 byte (bool)
+      - electrovalve_enabled : 1 byte (bool)
+
+      - high_pressure : 4 bytes (float32) -> bar
+      - low_pressure  : 4 bytes (float32) -> bar
+      - pressure_regulator_feedback  : 4 bytes (float32) -> bar
+      - propulsion_current_reference : 4 bytes (float32) -> A
+      - levitation_target_height     : 4 bytes (float32) -> mm
+
+  // end of measurements
+
+
+  [] orders:
+
+      - FAULT                             (id 600) : 4 bytes (uint32)
+      - Stop                              (id 601) : 4 bytes (uint32)
+      - Maintenance                       (id 602) : 4 bytes (uint32)
+      - Precharge                         (id 603) : 4 bytes (uint32)
+      - Open Contractors                  (id 604) : 4 bytes (uint32)
+      - Unbrake                           (id 605) : 4 bytes (uint32)
+      - Brake                             (id 606) : 4 bytes (uint32)
+      - Static Levitation                 (id 607) : 4 bytes (uint32)
+      - Propulsion                        (id 608) : 4 bytes (uint32)
+      - Dynamic Levitation                (id 609) : 4 bytes (uint32)
+      - Propulsion Parameterized          (id 610) : 4 bytes (uint32) // nota : la propulsión es en función a la corriente administrada
+      - Static Levitation Parameterized   (id 611) : 4 bytes (uint32) // nota : la levitación estática es en funcion a los milimetros que se desean de levitación (no a la corriente?)
+      - Dynamic Levitation Parameterized  (id 612) : 4 bytes (uint32) // nota : la levitación dinámica es en función a la distancia desead Y la corriente administrada (preguntar por diferencias)
+
+
+  // end of orders
+
+
+  [] packets:
+
+      # VCU State
+      {
+          - id : 625
+          - content : 1 byte
+            [
+                state
+            ]
+      }
+
+      # Pressures
+      {
+          - id : 626
+          - content : 12 bytes
+            [
+                high_pressure
+                low_pressure
+                pressure_regulator_feedback
+            ]
+      }
+
+      # Brake Status
+      {
+          - id : 627
+          - content : 1 byte
+            [
+                brakes_status
+            ]
+      }
+
+      # Outputs
+      {
+          - id : 628
+          - content : 1 byte
+            [
+                electrovalve_enabled
+            ]
+      }
+
+      # Safety
+      {
+          - id : 629
+          - content :
+            [
+                sdc_closed
+                hvmbs_connected
+                pcu_connected
+                lcu_connected
+            ]
+      }
+
+  // end of packets
 
 
 
@@ -478,11 +822,12 @@ Boards :
                        ...
                        elementn)
 offset = 0
-for each (packet([size, variable]))
+for each (element([type, variable]))
 {
-    variable1 = message[offset];
-    offset += size
+    variable1 = packet[offset];
+    offset += sizeof(size)
 }
+
 #undefine packet
 
 
