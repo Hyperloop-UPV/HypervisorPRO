@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cargo build
+
+cp ./target/debug/libudp_comm_prueba.so ../../HyperVisorPro/Assets/Plugins/udp_comm.so
+
+

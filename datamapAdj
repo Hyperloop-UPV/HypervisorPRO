@@ -533,10 +533,8 @@ Data Types:
           - current_sensor_w_a : 4 bytes (float32) -> A
           - gd_fault_a : 1 byte (bool)
           - gd_ready_a : 1 byte (bool)
-
-
       }
-    
+ 
       # B
       {
           - voltage_battery_b : 4 bytes (float32)

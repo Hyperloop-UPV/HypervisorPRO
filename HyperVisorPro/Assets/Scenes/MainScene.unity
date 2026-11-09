@@ -685,6 +685,7 @@ GameObject:
   - component: {fileID: 1352976633}
   - component: {fileID: 1352976631}
   - component: {fileID: 1352976634}
+  - component: {fileID: 1352976635}
   m_Layer: 0
   m_Name: SceneController
   m_TagString: Untagged
@@ -787,6 +788,18 @@ MonoBehaviour:
   mockPodMaxVelocity: 20
   mockPodAcceleration: 1
   lockInScene: 0
+--- !u!114 &1352976635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352976630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ef6b6fe2112fcd5a4197ba5686ce2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CommunicationController
 --- !u!1 &1937432719
 GameObject:
   m_ObjectHideFlags: 0

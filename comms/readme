@@ -1,0 +1,8 @@
+> hvp_comm  significa HyperVisorPro communications 
+
+> entorno de desarrollo en arch linux, empleando la librería estandard x86_64-pc-windows-gnu
+  ( mingw_w64-gcc ) para compilar en entornos de windows, si vas a continuar el desarrollo
+  de este proyecto debes tener una librería standard para windows instalada en el caso de que
+  quieras compilar binarios para windows desde un pc con linux.
+
+          cargo build --release --target x86_64-pc-windows-gnu
