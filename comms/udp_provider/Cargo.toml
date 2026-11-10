@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 
 tokio = { version = "1", features = ["full"] }
+crossterm = "0.27"
+rand = "0.10.3"
