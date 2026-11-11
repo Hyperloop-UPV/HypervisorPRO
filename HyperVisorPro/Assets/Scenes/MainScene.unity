@@ -711,6 +711,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e032485fb3138546ba02fa44c584c6c, type: 2}
   - {fileID: 11400000, guid: 6e9cc8f8443e6d8eda6c98c0599d0cbe, type: 2}
   - {fileID: 11400000, guid: 3a3c7560c9dc0aab0bac85e72382a183, type: 2}
+  - {fileID: 11400000, guid: f51c2adfd40fe933da8eeb6d3e441cf8, type: 2}
   transitionTime: 0.8
   lockInTransition: 0
   sceneCount: 0
@@ -787,7 +788,9 @@ MonoBehaviour:
   mockLevitationInitializationTime: 2.07
   mockPodMaxVelocity: 20
   mockPodAcceleration: 1
-  lockInScene: 0
+  providerIP: 127.0.0.1
+  providerPort: 8080
+  refreshRate_ms: 200
 --- !u!114 &1352976635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -797,9 +800,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1352976630}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50ef6b6fe2112fcd5a4197ba5686ce2f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c7eaaab5d426eba6acee043d859089b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CommunicationController
+  m_EditorClassIdentifier: Assembly-CSharp::UDPClient
 --- !u!1 &1937432719
 GameObject:
   m_ObjectHideFlags: 0

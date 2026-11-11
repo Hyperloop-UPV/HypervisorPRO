@@ -12,13 +12,13 @@ public class SceneController : MonoBehaviour
         PARADO = 0,
         LEVITANDO = 1,
         FUNCIONANDO = 2,
-        
-        // agregar escenas aquí 
+        SIMULATION = 3
+        // agregar escenas aquí
     }
 
 
     [Header("REFERENCES")]
-    
+
     [SerializeField]
     private Transform podPosition;
 
@@ -26,25 +26,38 @@ public class SceneController : MonoBehaviour
     [Header("MOCK SIMULATION DATA")]
 
     [SerializeField] [Range (0.0f, 100.0f)]
-    private float mockLevitationOffset_mm; 
+    private float mockLevitationOffset_mm;
 
     [SerializeField] [Range (1.0f, 150.0f)]
     private float mockLevitationOscilationOffset_mm;
 
     [SerializeField] [Range (1.0f, 10.0f)]
     private float mockLevittionOscilationSpeed;
-    
+ 
     [SerializeField] [Range(0.1f, 5.0f)]
     private float mockLevitationInitializationTime;
 
-    
     [SerializeField]
     private float   mockPodMaxVelocity;
-    
+ 
     [SerializeField]
     private float   mockPodAcceleration;
 
+
+    [Space (10)]
+    [Header("REAL SIMULATION DATA")]
+
     [SerializeField]
+    private string providerIP;
+
+    [SerializeField]
+    private int providerPort;
+
+    [SerializeField]
+    private int refreshRate_ms; // El tiempo que tarda en solicitar nueva informacion
+
+    private UDPClient udpClient;
+
     private bool lockInScene;
     private bool lockExitedScene;
     private int   currentSceneId;
@@ -56,11 +69,11 @@ public class SceneController : MonoBehaviour
     {
         lockInScene     = false;
         lockExitedScene = true;
-        currentSceneId  = -1; 
+        currentSceneId  = -1;
         mockPodVelocity = 0.0f;
 
         mockPodInitialPosition = new Vector3(podPosition.position.x, podPosition.position.y, podPosition.position.z);
-
+        udpClient = GetComponent<UDPClient>();
         TransitionToNewScene(0);
     }
 
@@ -68,23 +81,6 @@ public class SceneController : MonoBehaviour
     {
         StartCoroutine(HandleNewScene(sceneId));
     }
-
-    private void HandleScene(SceneNames sceneId)
-    {
-        switch (sceneId)
-        {
-            case SceneNames.PARADO:
-                StartCoroutine(StoppedSceneLoop());
-                break;
-            case SceneNames.LEVITANDO:
-                StartCoroutine(levitatingSceneLoop());
-                break;
-            case SceneNames.FUNCIONANDO:
-                StartCoroutine(RunningSceneLoop());
-                break;
-        }
-    }
-
 
     private IEnumerator HandleNewScene(int sceneId)
     {
@@ -100,6 +96,25 @@ public class SceneController : MonoBehaviour
         HandleScene((SceneNames) sceneId);
         currentSceneId = sceneId;
 
+    }
+
+    private void HandleScene(SceneNames sceneId)
+    {
+        switch (sceneId)
+        {
+            case SceneNames.PARADO:
+                StartCoroutine(StoppedSceneLoop());
+                break;
+            case SceneNames.LEVITANDO:
+                StartCoroutine(levitatingSceneLoop());
+                break;
+            case SceneNames.FUNCIONANDO:
+                StartCoroutine(RunningSceneLoop());
+                break;
+            case SceneNames.SIMULATION:
+                StartCoroutine(SimulationSceneLoop());
+                break;
+        }
     }
 
 
@@ -138,14 +153,32 @@ public class SceneController : MonoBehaviour
     private IEnumerator RunningSceneLoop()
     {
         Vector3 levitatingPosition = new Vector3(mockPodInitialPosition.x, mockPodInitialPosition.y + mockLevitationOffset_mm/1000, mockPodInitialPosition.z);
-        
+
         if (levitatingPosition != podPosition.position)
             StartCoroutine(LerpToPos(levitatingPosition));
-    
+
+        lockInScene = true;
         while (lockInScene)
         {
             yield return null;
         }
+        lockExitedScene = true;
+    }
+
+
+    private IEnumerator SimulationSceneLoop()
+    {
+        StartCoroutine(LerpToPos(mockPodInitialPosition));
+
+
+        udpClient.ConnectToProvider(providerIP, providerPort, refreshRate_ms);
+        lockInScene = true;
+        while (lockInScene)
+        {
+          //Debug.Log("Speed: " + udpClient.liveData.speed + "Levitation: " + udpClient.liveData.levitation);
+          yield return new WaitForSeconds(refreshRate_ms / 1000f);
+        }
+        udpClient.DissconectFromProvider();
         lockExitedScene = true;
     }
 
@@ -157,7 +190,7 @@ public class SceneController : MonoBehaviour
         float progress;
 
         while (elapsedTime <= mockLevitationInitializationTime)
-        {   
+        {
             elapsedTime += Time.deltaTime;
             progress = elapsedTime/mockLevitationInitializationTime; // lineal progress but can be changed to exponential or other functions
 
