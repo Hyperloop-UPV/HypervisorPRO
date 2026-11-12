@@ -10,8 +10,9 @@ public class UDPClient : MonoBehaviour
 
   public struct PodData {
 
-      public float speed;
-      public float levitation;
+    public float speed;
+    public float levitation;
+
   }
 
   [HideInInspector]
@@ -39,12 +40,10 @@ public class UDPClient : MonoBehaviour
 
         byte[] data = new byte[0];
         client.Send(data, data.Length, providerEndPoint);
-        Debug.Log("Data Sent");
         byte[] rcv_data = client.Receive(ref providerEndPoint);
-        Debug.Log("Data Recieved");
+
         Thread.Sleep(refreshRate_ms);
       }
-      Debug.Log("Closing Client");
   }
 
   public void DissconectFromProvider()
