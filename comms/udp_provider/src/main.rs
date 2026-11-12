@@ -1,107 +1,135 @@
 use std::env;
 use std::io;
 use std::io::Write;
-use std::thread;
+use std::mem::size_of;
+use std::net::SocketAddr;
 use std::sync::Arc;
+use std::sync::Mutex;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
-use std::sync::Mutex;
-use tokio::net::UdpSocket;
-use std::net::SocketAddr;
+use std::thread;
 use std::time::Duration;
+use tokio::net::UdpSocket;
 
-use rand;
 use crossterm::event::{self, Event};
-use serde::{Serialize, Deserialize};
+use rand;
+use serde::{Deserialize, Serialize};
 use serde_json;
 
-// Los argumentos que se le deben pasar al script son (ip+puerto) del backend y (ip+puerto) del
-// punto de acceso
+// Los argumentos que se le deben pasar al script son (ip+puerto) del provider y (ip+puerto) del
+// backend
 
 #[derive(Serialize, Deserialize)]
 struct BackendData {
-
-    levitation_mm : f32,
-    speed_kmh     : f32,
-
+    demo_id: u8,
+    levitation_mm: f32,
+    speed_kmh: f32,
 }
 
-const REFRESH_RATE : u64 = 500;
+const REFRESH_RATE: u64 = 200;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+    let provider_addr: String = String::from(&args[1]);
+    let backend_addr: String = String::from(&args[2]);
 
-    let args : Vec<String> = env::args().collect();
-    let provider_addr : String = String::from(&args[1]);
-    let backend_addr  : String = String::from(&args[2]);
+    let backend_data: Arc<Mutex<BackendData>> = Arc::new(Mutex::new(BackendData {
+        demo_id: 0,
+        levitation_mm: 0.0,
+        speed_kmh: 0.0,
+    }));
+    let client_list: Arc<Mutex<Vec<SocketAddr>>> = Arc::new(Mutex::new(vec![]));
 
-    let backend_data  : Arc<Mutex<BackendData>> = Arc::new(Mutex::new(BackendData { levitation_mm: 1.0, speed_kmh: 100.0}));
-    let client_list   : Arc<Mutex<Vec<SocketAddr>>> = Arc::new(Mutex::new(vec![]));
-
-    let backend_sock  : UdpSocket = UdpSocket::bind(backend_addr.clone()).await?;
-    let provider_sock : UdpSocket = UdpSocket::bind(provider_addr.clone()).await?;
+    let backend_sock: UdpSocket = UdpSocket::bind(backend_addr.clone()).await?;
+    let provider_sock: UdpSocket = UdpSocket::bind(provider_addr.clone()).await?;
     println!("Started HypervisorPRO udp server");
 
-
-    let listening_client_ref = Arc::clone(&client_list);
-    let console_client_ref   = Arc::clone(&client_list);
-    let console_bk_data_ref  = Arc::clone(&backend_data);
+    // let listening_client_ref = Arc::clone(&client_list);
+    let console_client_ref = Arc::clone(&client_list);
+    let console_bk_data_ref = Arc::clone(&backend_data);
     let bk_data_listener_ref = Arc::clone(&backend_data);
     let provider_bk_data_ref = Arc::clone(&backend_data);
 
     // listener to new devices Connecting
-    tokio::spawn(async move { backend_listener_thread(bk_data_listener_ref, backend_sock).await; } );
-    tokio::spawn(async move { provider_thread(provider_bk_data_ref, provider_sock).await; } );
-    thread::spawn(move || console_thread(console_client_ref, console_bk_data_ref, provider_addr, backend_addr));
+    tokio::spawn(async move {
+        backend_listener_thread(bk_data_listener_ref, backend_sock).await;
+    });
+    tokio::spawn(async move {
+        provider_thread(provider_bk_data_ref, provider_sock).await;
+    });
+    thread::spawn(move || {
+        console_thread(
+            console_client_ref,
+            console_bk_data_ref,
+            provider_addr,
+            backend_addr,
+        )
+    });
 
     loop {}
 }
 
+async fn provider_thread(backend_data: Arc<Mutex<BackendData>>, socket: UdpSocket) -> () {
+    let mut buf = [0; size_of::<BackendData>()];
+    loop {
+        let (_, addr) = socket.recv_from(&mut buf).await.unwrap();
 
-async fn provider_thread(backend_data : Arc<Mutex<BackendData>>, socket : UdpSocket) -> () {
+        let serialized_data = {
+            let data = match backend_data.lock() {
+                Ok(data) => data,
+                Err(err) => {
+                    eprintln!("Error al bloquear backend_data: {err}");
+                    continue;
+                }
+            };
 
-        let mut buf = [0; 1024];
-        loop {
-            let (len, addr) = socket.recv_from(&mut buf).await.unwrap();
-            println!("new Listener with ip {addr}");
-            {
-                let data = backend_data.lock().unwrap();
-                let serialiced_data = serde_json::to_vec(&*data).unwrap();
-                let _ = socket.send_to(&buf[..len], addr).await.unwrap();
+            match serde_json::to_vec(&*data) {
+                Ok(bytes) => bytes,
+                Err(err) => {
+                    eprintln!("Error serializando datos: {err}");
+                    continue;
+                }
             }
+        }; // El bloqueo se libera aquí.
+
+        if let Err(err) = socket.send_to(&serialized_data, addr).await {
+            eprintln!("Error enviando respuesta: {err}");
         }
+    }
 }
 
-async fn backend_listener_thread(backend_data : Arc<Mutex<BackendData>>, socket : UdpSocket) -> () {
-
+async fn backend_listener_thread(backend_data: Arc<Mutex<BackendData>>, socket: UdpSocket) -> () {
     loop {
-        //let mut buf = [0; 1024];
-        //let (buf, addr) = socket.recv_from(&mut buf).await.unwrap();
+        let mut buf = [0; 1024];
+        let (n, _) = socket.recv_from(&mut buf).await.unwrap();
 
-        let random_levitation : f32 = rand::random_range(0.0..1.0); // Generate a random
-        let random_velocity   : f32 = rand::random_range(0.0..100.0);
-
+        let packet: BackendData = serde_json::from_slice(&buf[0..n]).unwrap();
         // lock pod data to write (its inside a scope because the mutex unloks automatically when it
         // falls out of scope)
         {
             let mut data = backend_data.lock().unwrap();
-            data.levitation_mm = random_levitation;
-            data.speed_kmh = random_velocity;
+            data.demo_id = packet.demo_id;
+            data.levitation_mm = packet.levitation_mm;
+            data.speed_kmh = packet.speed_kmh;
         }
 
         thread::sleep(Duration::from_millis(REFRESH_RATE));
     }
-
 }
 
-fn console_thread(client_list : Arc<Mutex<Vec<SocketAddr>>>, backend_data : Arc<Mutex<BackendData>> , provider_addr : String, backend_addr : String) -> () {
+fn console_thread(
+    client_list: Arc<Mutex<Vec<SocketAddr>>>,
+    backend_data: Arc<Mutex<BackendData>>,
+    provider_addr: String,
+    backend_addr: String,
+) -> () {
     let stdin = io::stdin();
 
     print!("\x1B[2J\x1B[H");
     let _ = io::stdout().flush();
 
     loop {
- 
         println!("Provider address : {provider_addr}");
         println!("Backend  address : {backend_addr}");
         println!("1) Log of clients");
@@ -135,7 +163,6 @@ fn console_thread(client_list : Arc<Mutex<Vec<SocketAddr>>>, backend_data : Arc<
 
                 thread::scope(|s| {
                     s.spawn(|| {
-
                         while let Ok(event) = event::read() {
                             if matches!(event, Event::Key(_)) {
                                 stop.store(true, Ordering::Relaxed);
@@ -146,7 +173,6 @@ fn console_thread(client_list : Arc<Mutex<Vec<SocketAddr>>>, backend_data : Arc<
 
                     // update data
                     while !stop.load(Ordering::Relaxed) {
-
                         {
                             let data = backend_data.lock().unwrap();
                             println!("Live Data");
@@ -154,7 +180,7 @@ fn console_thread(client_list : Arc<Mutex<Vec<SocketAddr>>>, backend_data : Arc<
                             println!("[ ] Levitation : [{}] mm", data.levitation_mm);
                         }
 
-                        println!("Press any key...");
+                        println!("Press Enter...");
 
                         thread::sleep(Duration::from_millis(REFRESH_RATE));
 
@@ -163,8 +189,12 @@ fn console_thread(client_list : Arc<Mutex<Vec<SocketAddr>>>, backend_data : Arc<
                     }
                 });
             }
-            "q" => { std::process::exit(1); }
-            _ => { println!("Invalid option");}
+            "q" => {
+                std::process::exit(1);
+            }
+            _ => {
+                println!("Invalid option");
+            }
         }
 
         print!("\x1B[2J\x1B[H");

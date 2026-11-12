@@ -4,14 +4,15 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 
 public class UDPClient : MonoBehaviour
 {
 
   public struct PodData {
 
-    public float speed;
-    public float levitation;
+    public float levitation_mm  { get; set; }
+    public float speed_kmh       { get; set; }
 
   }
 
@@ -41,7 +42,11 @@ public class UDPClient : MonoBehaviour
         byte[] data = new byte[0];
         client.Send(data, data.Length, providerEndPoint);
         byte[] rcv_data = client.Receive(ref providerEndPoint);
+        string json = Encoding.UTF8.GetString(rcv_data);
 
+        //Debug.Log(json);
+        liveData = JsonSerializer.Deserialize<PodData>(json);
+        Debug.Log("Recived speed is: " + liveData.speed_kmh + " levitation is: " + liveData.levitation_mm);
         Thread.Sleep(refreshRate_ms);
       }
   }
