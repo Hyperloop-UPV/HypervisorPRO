@@ -9,11 +9,22 @@ public class SceneController : MonoBehaviour
    // Si se añade una nueva escena, debe ser agregado su id aquí
     private enum SceneNames
     {
+      /*
         PARADO = 0,
         LEVITANDO = 1,
         FUNCIONANDO = 2,
         SIMULATION = 3
-        // agregar escenas aquí
+        */
+      //agregar escenas aquí
+      //
+      //
+      //MAQUETA
+        PARADO = 0,
+        TEST = 1,
+        LEVITANDO = 2,
+        OSCILANDO = 3,
+        FULLVEL = 4
+
     }
 
 
@@ -102,6 +113,7 @@ public class SceneController : MonoBehaviour
     {
         switch (sceneId)
         {
+          /*
             case SceneNames.PARADO:
                 StartCoroutine(StoppedSceneLoop());
                 break;
@@ -114,9 +126,35 @@ public class SceneController : MonoBehaviour
             case SceneNames.SIMULATION:
                 StartCoroutine(SimulationSceneLoop());
                 break;
+          */
+
+
+          case SceneNames.TEST:
+            StartCoroutine(SimulationDemo_test);
+            break;
+          case SceneNames.LEVITANDO:
+            StartCoroutine(SimulationDemo_levitation);
+            break;
+          case SceneNames.OSCILANDO:
+            S
+
+            
         }
     }
 
+    // SCENES //
+    
+    // Every scene is a subrutine (runs on the same thread but uses the unity scheduler) that
+    // that forks its behaviour depending on its id. 
+    // 
+    // There are two bool variables (lockInScene and lockExitedScene) that acts as locks in 
+    // order to keep the sincronous flow of data between scenes.
+    //
+    //  - lockInScene locks the scene until a new event calls the function TransitionToNewScene()
+    //    and if lockInScene = false, new events will be discarted.
+    //
+    //  - lockExitedScene locks the scene until the exit rutine is completed, this allows the last
+    //    scene to complete before a new scene is set
 
     private IEnumerator StoppedSceneLoop()
     {
@@ -175,13 +213,33 @@ public class SceneController : MonoBehaviour
         lockInScene = true;
         while (lockInScene)
         {
-          //Debug.Log("Speed: " + udpClient.liveData.speed + "Levitation: " + udpClient.liveData.levitation);
+          switch (udpClient.liveData.demo_id)
+          {
+            case 0 : /*Debug.Log("No demo");*/ break;
+            case 1 : SimulationDemo_test(); break;
+          }
           yield return new WaitForSeconds(refreshRate_ms / 1000f);
         }
         udpClient.DissconectFromProvider();
         lockExitedScene = true;
     }
 
+    
+    private void SimulationDemo_test()
+    {
+          Debug.Log("Speed: " + udpClient.liveData.speed_kmh + "Levitation: " + udpClient.liveData.levitation_mm);
+    }
+
+    private void SimulationDemo_levitation()
+    {
+
+    }
+
+    private void SimulationDemo_oscilation()
+    {
+      
+
+    }
 
     private IEnumerator LerpToPos(Vector3 targetPos)
     {

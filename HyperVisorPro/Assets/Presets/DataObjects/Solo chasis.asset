@@ -15,5 +15,6 @@ MonoBehaviour:
   sceneId: 4
   sceneName: Solo Chasis
   cameraDistanceToFocusPoint: 20
+  cameraFOV: 60
   camearAngleX: 80
   cameraAngleY: 70

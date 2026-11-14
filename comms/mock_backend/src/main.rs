@@ -1,25 +1,31 @@
+use crossterm::event;
+use crossterm::event::Event;
 use serde::Serialize;
 use std::env;
 use std::io;
 use std::io::Write;
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 use tokio::net::UdpSocket;
 
 #[derive(Serialize)]
 struct BackendData {
     demo_id: u8,
     levitation_mm: f32,
+    acceleration_kmh: f32,
     speed_kmh: f32,
 }
 
 const MOCK_SEND_RATE: u64 = 200;
+const MOCK_UPDATE_RATE: u64 = 50;
 
-const MOCK_MAX_VELOCITY: f32 = 200.0;
-const MOCK_ACCELERATION_RATE: f32 = 3.0;
-const MOCK_MAX_ACCELERATION: f32 = 30.0;
+const MOCK_MAX_VELOCITY: f32 = 10.0;
+const MOCK_ACCELERATION_RATE: f32 = 0.05;
+const MOCK_MAX_ACCELERATION: f32 = 1.0;
 
 const MOCK_MAX_LEVITATION_MM: f32 = 60.0;
 const MOCK_LEVITATION_OFFSET_MM: f32 = 10.0;
@@ -35,8 +41,9 @@ async fn main() -> io::Result<()> {
 
     let backend_data: Arc<Mutex<BackendData>> = Arc::new(Mutex::new(BackendData {
         demo_id: 0,
-        levitation_mm: 1.0,
-        speed_kmh: 100.0,
+        levitation_mm: 0.0,
+        acceleration_kmh: 0.0,
+        speed_kmh: 0.0,
     }));
     // create shared pointer for console thread
     let bk_data_ref: Arc<Mutex<BackendData>> = Arc::clone(&backend_data);
@@ -104,15 +111,15 @@ fn console_thread(
                 let _ = io::stdout().flush();
 
                 println!("Choose Demo");
-                println!("1) levitation");
-                println!("2) Oscilating movement");
-                println!("3) Full Sequence");
+                println!("1) Connection Test");
+                println!("2) Levitation");
+                println!("3) Oscilating movement");
+                println!("4) Full Speed");
 
                 print!("> ");
                 let _ = io::stdout().flush();
                 let mut demo_input: String = String::new();
                 _ = stdin.read_line(&mut demo_input);
-
                 let bk_ref = Arc::clone(&backend_data);
                 let demo_thread_h = thread::spawn(move || demo_thread(bk_ref, demo_input.clone()));
                 demo_thread_h.join().unwrap();
@@ -136,44 +143,191 @@ fn demo_thread(backend_data: Arc<Mutex<BackendData>>, demo_index: String) {
     print!("\x1B[2J\x1B[H");
     let _ = io::stdout().flush();
 
+    {
+        let mut data = backend_data.lock().unwrap();
+        data.demo_id = demo_index.as_bytes()[0] - b'0';
+    }
+
     match demo_index.trim() {
         "1" => {
+            demo_random(Arc::clone(&backend_data));
+        }
+
+        "2" => {
             demo_levitation(Arc::clone(&backend_data));
         }
 
-        "2" => {}
+        "3" => {
+            demo_oscilation(Arc::clone(&backend_data));
+        }
 
-        "3" => {}
+        "4" => {}
 
         _ => {
             println!("Invalid Demo Index");
         }
     }
 
-    // print progress and q to quit
+    {
+        let mut data = backend_data.lock().unwrap();
+        data.demo_id = 0;
+        data.acceleration_kmh = 0.0;
+        data.speed_kmh = 0.0;
+        data.levitation_mm = 0.0;
+    }
+}
+
+fn demo_random(backend_data: Arc<Mutex<BackendData>>) -> () {
+    // dispach local thread and wait for any input,
+    let stop = AtomicBool::new(false);
+
+    thread::scope(|s| {
+        s.spawn(|| {
+            while let Ok(event) = event::read() {
+                if matches!(event, Event::Key(_)) {
+                    stop.store(true, Ordering::Relaxed);
+                    break;
+                }
+            }
+        });
+
+        s.spawn(|| {
+            // update data
+            while !stop.load(Ordering::Relaxed) {
+                println!("Press Enter to stop simulation...");
+
+                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
+
+                print!("\x1B[2J\x1B[H");
+                let _ = io::stdout().flush();
+            }
+        });
+
+        while !stop.load(Ordering::Relaxed) {
+            let rand_levitation = rand::random_range(1.0..MOCK_MAX_LEVITATION_MM);
+            let rand_velocity = rand::random_range(1.0..MOCK_MAX_VELOCITY);
+            let rand_acceleration = rand::random_range(1.0..MOCK_MAX_ACCELERATION);
+
+            {
+                let mut live_data = backend_data.lock().unwrap();
+                live_data.levitation_mm = rand_levitation;
+                live_data.acceleration_kmh = rand_acceleration;
+                live_data.speed_kmh = rand_velocity;
+            }
+            thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
+        }
+    });
 }
 
 fn demo_levitation(backend_data: Arc<Mutex<BackendData>>) -> () {
-    let loc_velocity: f32 = 0.0;
     let mut loc_levitation: f32 = 0.0;
 
-    let mut last_frame = Instant::now();
-    let mut now_frame: Instant;
-    let mut deltatime: Duration;
-    let start = Instant::now();
-    while start.elapsed() <= Duration::from_secs(2) {
-        now_frame = Instant::now();
-        deltatime = now_frame - last_frame;
-        last_frame = now_frame;
+    let stop = AtomicBool::new(false);
 
-        if loc_levitation < MOCK_MAX_LEVITATION_MM {
-            loc_levitation += 50.0 * deltatime.as_secs_f32();
-        }
+    thread::scope(|s| {
+        // ask for input and lock demo loop
+        s.spawn(|| {
+            while let Ok(event) = event::read() {
+                if matches!(event, Event::Key(_)) {
+                    stop.store(true, Ordering::Relaxed);
+                    break;
+                }
+            }
+        });
 
-        {
-            let mut live_data = backend_data.lock().unwrap();
-            live_data.levitation_mm = loc_levitation;
-            live_data.speed_kmh = loc_velocity;
+        // print console
+        s.spawn(|| {
+            // update data
+            while !stop.load(Ordering::Relaxed) {
+                println!("Press Enter to stop simulation...");
+
+                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
+
+                print!("\x1B[2J\x1B[H");
+                let _ = io::stdout().flush();
+            }
+        });
+
+        while !stop.load(Ordering::Relaxed) {
+            if loc_levitation <= MOCK_MAX_LEVITATION_MM {
+                loc_levitation += 1.0;
+            }
+            {
+                let mut live_data = backend_data.lock().unwrap();
+                live_data.levitation_mm = loc_levitation;
+                live_data.acceleration_kmh = 0.0;
+                live_data.speed_kmh = 0.0;
+            }
+            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE)); // for performance reasons
         }
-    }
+    });
+}
+
+fn demo_oscilation(backend_data: Arc<Mutex<BackendData>>) -> () {
+    let loc_levitation: f32 = MOCK_MAX_LEVITATION_MM;
+    let mut loc_speed: f32 = 0.0;
+    let mut loc_acceleration = 0.0;
+
+    let stop = AtomicBool::new(false);
+
+    thread::scope(|s| {
+        // ask for input and lock demo loop
+        s.spawn(|| {
+            while let Ok(event) = event::read() {
+                if matches!(event, Event::Key(_)) {
+                    stop.store(true, Ordering::Relaxed);
+                    break;
+                }
+            }
+        });
+
+        // print console
+        s.spawn(|| {
+            // update data
+            while !stop.load(Ordering::Relaxed) {
+                println!("Press Enter to stop simulation...");
+
+                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
+                print!("\x1B[2J\x1B[H");
+                let _ = io::stdout().flush();
+            }
+        });
+
+        let mut direction: f32 = 1.0;
+        let mut accelerating: f32 = 1.0;
+        // main demo loop
+        while !stop.load(Ordering::Relaxed) {
+            // reached top speed, need to decelerate
+            if (loc_speed >= MOCK_MAX_VELOCITY || loc_speed <= -MOCK_MAX_VELOCITY)
+                && accelerating == 1.0
+            {
+                accelerating = -1.0;
+            }
+
+            // reached bottom speed, need to accelerate and change direction
+            if ((loc_speed <= 0.0 && direction == 1.0) || (loc_speed >= 0.0 && direction == -1.0))
+                && accelerating == -1.0
+            {
+                if direction == -1.0 {
+                    direction = 1.0;
+                } else {
+                    direction = -1.0;
+                }
+                accelerating = 1.0;
+            }
+
+            loc_acceleration += MOCK_ACCELERATION_RATE * accelerating;
+            loc_speed += loc_acceleration * direction;
+
+            loc_acceleration =
+                loc_acceleration.clamp(-MOCK_MAX_ACCELERATION, MOCK_MAX_ACCELERATION);
+            {
+                let mut live_data = backend_data.lock().unwrap();
+                live_data.levitation_mm = loc_levitation;
+                live_data.acceleration_kmh = loc_acceleration;
+                live_data.speed_kmh = loc_speed;
+            }
+            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE));
+        }
+    });
 }

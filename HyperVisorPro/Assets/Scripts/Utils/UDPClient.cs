@@ -10,9 +10,10 @@ public class UDPClient : MonoBehaviour
 {
 
   public struct PodData {
-
+    public uint  demo_id        { get; set; }
     public float levitation_mm  { get; set; }
-    public float speed_kmh       { get; set; }
+    public float acceleration_kmh { get; set; }
+    public float speed_kmh      { get; set; }
 
   }
 
@@ -44,9 +45,7 @@ public class UDPClient : MonoBehaviour
         byte[] rcv_data = client.Receive(ref providerEndPoint);
         string json = Encoding.UTF8.GetString(rcv_data);
 
-        //Debug.Log(json);
         liveData = JsonSerializer.Deserialize<PodData>(json);
-        Debug.Log("Recived speed is: " + liveData.speed_kmh + " levitation is: " + liveData.levitation_mm);
         Thread.Sleep(refreshRate_ms);
       }
   }

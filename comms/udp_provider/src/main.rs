@@ -12,7 +12,6 @@ use std::time::Duration;
 use tokio::net::UdpSocket;
 
 use crossterm::event::{self, Event};
-use rand;
 use serde::{Deserialize, Serialize};
 use serde_json;
 
@@ -23,6 +22,7 @@ use serde_json;
 struct BackendData {
     demo_id: u8,
     levitation_mm: f32,
+    acceleration_kmh: f32,
     speed_kmh: f32,
 }
 
@@ -33,10 +33,17 @@ async fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let provider_addr: String = String::from(&args[1]);
     let backend_addr: String = String::from(&args[2]);
+    let mut headerless_flag: bool = false;
+
+    let argc = env::args().count();
+    if argc == 4 && args[3] == "--headerless" || argc == 4 && args[3] == "-hl" {
+        headerless_flag = true;
+    }
 
     let backend_data: Arc<Mutex<BackendData>> = Arc::new(Mutex::new(BackendData {
         demo_id: 0,
         levitation_mm: 0.0,
+        acceleration_kmh: 0.0,
         speed_kmh: 0.0,
     }));
     let client_list: Arc<Mutex<Vec<SocketAddr>>> = Arc::new(Mutex::new(vec![]));
@@ -58,16 +65,20 @@ async fn main() -> io::Result<()> {
     tokio::spawn(async move {
         provider_thread(provider_bk_data_ref, provider_sock).await;
     });
-    thread::spawn(move || {
-        console_thread(
-            console_client_ref,
-            console_bk_data_ref,
-            provider_addr,
-            backend_addr,
-        )
-    });
+    if !headerless_flag {
+        thread::spawn(move || {
+            console_thread(
+                console_client_ref,
+                console_bk_data_ref,
+                provider_addr,
+                backend_addr,
+            )
+        });
+    }
 
-    loop {}
+    loop {
+        thread::sleep(Duration::from_millis(1000));
+    }
 }
 
 async fn provider_thread(backend_data: Arc<Mutex<BackendData>>, socket: UdpSocket) -> () {
@@ -111,6 +122,7 @@ async fn backend_listener_thread(backend_data: Arc<Mutex<BackendData>>, socket: 
             let mut data = backend_data.lock().unwrap();
             data.demo_id = packet.demo_id;
             data.levitation_mm = packet.levitation_mm;
+            data.acceleration_kmh = packet.acceleration_kmh;
             data.speed_kmh = packet.speed_kmh;
         }
 
@@ -176,8 +188,10 @@ fn console_thread(
                         {
                             let data = backend_data.lock().unwrap();
                             println!("Live Data");
-                            println!("[ ] Speed      : [{}] KmH", data.speed_kmh);
-                            println!("[ ] Levitation : [{}] mm", data.levitation_mm);
+                            println!("[ ] Demo Id       : [{}] ", data.demo_id);
+                            println!("[ ] Speed         : [{}] KmH", data.speed_kmh);
+                            println!("[ ] Acceleration  : [{}] KmH", data.acceleration_kmh);
+                            println!("[ ] Levitation    : [{}] mm", data.levitation_mm);
                         }
 
                         println!("Press Enter...");
