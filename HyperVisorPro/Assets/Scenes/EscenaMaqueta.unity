@@ -426,6 +426,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 83f4b9c90861ed90dac29b1b06390467, type: 2}
   - {fileID: 11400000, guid: 273055a09dd2cd0ce91161dec696471c, type: 2}
   - {fileID: 11400000, guid: f60b3da02d66469c586305a890031d51, type: 2}
+  - {fileID: 11400000, guid: 74f25aed4efd6d11ab5a4673dc063846, type: 2}
   transitionTime: 0.8
   lockInTransition: 0
   sceneCount: 0
@@ -458,6 +459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   podPosition: {fileID: 46593765}
   cameraController: {fileID: 1352976631}
+  railT: {fileID: 0}
   mockLevitationOffset_mm: 70
   mockLevitationOscilationOffset_mm: 136.8
   mockLevittionOscilationSpeed: 1

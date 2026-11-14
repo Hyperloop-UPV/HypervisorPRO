@@ -35,7 +35,7 @@ public class SceneController : MonoBehaviour
 
     [SerializeField]
     private CameraController cameraController;
-    
+
     [SerializeField]
     private GameObject railT;
     [Space(10)]

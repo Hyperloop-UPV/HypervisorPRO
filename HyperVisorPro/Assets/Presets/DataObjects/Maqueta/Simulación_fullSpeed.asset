@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbe34b45ab518d50bb41838bdd6a04ca, type: 3}
   m_Name: "Simulaci\xF3n_fullSpeed"
   m_EditorClassIdentifier: Assembly-CSharp::SceneData
-  sceneId: 3
+  sceneId: 4
   sceneName: Full Speed
-  cameraDistanceToFocusPoint: 20
-  cameraFOV: 99.7
-  camearAngleX: 40
-  cameraAngleY: 90
+  cameraDistanceToFocusPoint: 5
+  cameraFOV: 90.8
+  camearAngleX: 27
+  cameraAngleY: 151

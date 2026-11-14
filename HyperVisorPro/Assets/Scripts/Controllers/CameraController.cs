@@ -64,10 +64,13 @@ public class CameraController : MonoBehaviour
         StartCoroutine(OscilateToPos(
             sceneSettings[sceneIndex].cameraAngleY,
             sceneSettings[sceneIndex].camearAngleX,
-            sceneSettings[sceneIndex].cameraDistanceToFocusPoint
+            sceneSettings[sceneIndex].cameraDistanceToFocusPoint,
+            sceneSettings[sceneIndex].cameraFOV
             ));
-        
+
     }
+
+
 
     // Función auxiliar que busca el indice de la configuración de la escena dentro del array (sceneSettings)
     // dado el identificador sceneID
@@ -125,7 +128,7 @@ public class CameraController : MonoBehaviour
     * dados unos angulos X e Y, y una distancia hacia el foco (cameraFocusPoint).
     */ 
 
-    private IEnumerator OscilateToPos(float targetAngleY, float targetAngleX, float targetDist)
+    private IEnumerator OscilateToPos(float targetAngleY, float targetAngleX, float targetDist, float targetFOV)
     {
         float elapsedTime = 0.0f;
         float progress;
@@ -133,11 +136,14 @@ public class CameraController : MonoBehaviour
         float initialDist   = Vector3.Distance(mainCamera.transform.position, cameraFocusPoint);
         float currentDist;
 
+        Camera cameraReference = mainCamera.transform.GetComponent<Camera>();
+        float initialFOV = cameraReference.fieldOfView;
+        
         Quaternion initialRotation = mainCamera.transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(targetAngleX, targetAngleY, 0.0f);
 
         while (elapsedTime <= transitionTime)
-        {            
+        {
             elapsedTime += Time.deltaTime;
             progress = elapsedTime/transitionTime; // lineal progress but can be changed to exponential
 
@@ -152,6 +158,8 @@ public class CameraController : MonoBehaviour
                 cameraFocusPoint - mainCamera.transform.position,
                 Vector3.up
             );
+
+            cameraReference.fieldOfView = Mathf.Lerp(initialFOV, targetFOV, progress );
 
 
             yield return null;
