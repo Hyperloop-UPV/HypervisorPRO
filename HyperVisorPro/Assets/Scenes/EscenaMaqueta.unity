@@ -397,7 +397,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1352976632}
-  - component: {fileID: 1352976633}
   - component: {fileID: 1352976631}
   - component: {fileID: 1352976634}
   - component: {fileID: 1352976635}
@@ -423,10 +422,10 @@ MonoBehaviour:
   mainCamera: {fileID: 1007128476}
   podPosition: {fileID: 46593765}
   sceneSettings:
-  - {fileID: 11400000, guid: 0e032485fb3138546ba02fa44c584c6c, type: 2}
-  - {fileID: 11400000, guid: 6e9cc8f8443e6d8eda6c98c0599d0cbe, type: 2}
-  - {fileID: 11400000, guid: 3a3c7560c9dc0aab0bac85e72382a183, type: 2}
-  - {fileID: 11400000, guid: f51c2adfd40fe933da8eeb6d3e441cf8, type: 2}
+  - {fileID: 11400000, guid: d840e1c3fe29936b0876d30ea540a187, type: 2}
+  - {fileID: 11400000, guid: 83f4b9c90861ed90dac29b1b06390467, type: 2}
+  - {fileID: 11400000, guid: 273055a09dd2cd0ce91161dec696471c, type: 2}
+  - {fileID: 11400000, guid: f60b3da02d66469c586305a890031d51, type: 2}
   transitionTime: 0.8
   lockInTransition: 0
   sceneCount: 0
@@ -445,45 +444,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1352976633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352976630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4b0d8a74fe1f234eaa30861a5fdd140, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputController
-  transitionToNewScene:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1352976631}
-        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
-        m_MethodName: TransitionToNewscene
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1352976634}
-        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
-        m_MethodName: TransitionToNewScene
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1352976634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,6 +457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   podPosition: {fileID: 46593765}
+  cameraController: {fileID: 1352976631}
   mockLevitationOffset_mm: 70
   mockLevitationOscilationOffset_mm: 136.8
   mockLevittionOscilationSpeed: 1
@@ -505,7 +466,7 @@ MonoBehaviour:
   mockPodAcceleration: 1
   providerIP: 127.0.0.1
   providerPort: 8080
-  refreshRate_ms: 200
+  refreshRate_ms: 10
 --- !u!114 &1352976635
 MonoBehaviour:
   m_ObjectHideFlags: 0

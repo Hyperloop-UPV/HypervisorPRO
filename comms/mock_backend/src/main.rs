@@ -20,14 +20,15 @@ struct BackendData {
     speed_kmh: f32,
 }
 
-const MOCK_SEND_RATE: u64 = 200;
-const MOCK_UPDATE_RATE: u64 = 50;
+const MOCK_SEND_RATE: u64 = 10;
+const MOCK_UPDATE_RATE: u64 = 10;
 
 const MOCK_MAX_VELOCITY: f32 = 10.0;
+const MOCK_MAX_FULL_SPEED: f32 = 200.0;
 const MOCK_ACCELERATION_RATE: f32 = 0.05;
 const MOCK_MAX_ACCELERATION: f32 = 1.0;
 
-const MOCK_MAX_LEVITATION_MM: f32 = 60.0;
+const MOCK_MAX_LEVITATION_MM: f32 = 100.0;
 const MOCK_LEVITATION_OFFSET_MM: f32 = 10.0;
 
 #[tokio::main]
@@ -161,7 +162,9 @@ fn demo_thread(backend_data: Arc<Mutex<BackendData>>, demo_index: String) {
             demo_oscilation(Arc::clone(&backend_data));
         }
 
-        "4" => {}
+        "4" => {
+            demo_fullspeed(Arc::clone(&backend_data));
+        }
 
         _ => {
             println!("Invalid Demo Index");
@@ -183,6 +186,10 @@ fn demo_random(backend_data: Arc<Mutex<BackendData>>) -> () {
 
     thread::scope(|s| {
         s.spawn(|| {
+            print!("\x1B[2J\x1B[H");
+            let _ = io::stdout().flush();
+
+            println!("Press Enter to stop simulation...");
             while let Ok(event) = event::read() {
                 if matches!(event, Event::Key(_)) {
                     stop.store(true, Ordering::Relaxed);
@@ -191,22 +198,11 @@ fn demo_random(backend_data: Arc<Mutex<BackendData>>) -> () {
             }
         });
 
-        s.spawn(|| {
-            // update data
-            while !stop.load(Ordering::Relaxed) {
-                println!("Press Enter to stop simulation...");
-
-                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
-
-                print!("\x1B[2J\x1B[H");
-                let _ = io::stdout().flush();
-            }
-        });
-
         while !stop.load(Ordering::Relaxed) {
-            let rand_levitation = rand::random_range(1.0..MOCK_MAX_LEVITATION_MM);
-            let rand_velocity = rand::random_range(1.0..MOCK_MAX_VELOCITY);
-            let rand_acceleration = rand::random_range(1.0..MOCK_MAX_ACCELERATION);
+            let rand_levitation = rand::random_range(0.0..MOCK_MAX_LEVITATION_MM);
+            let rand_velocity = rand::random_range(-MOCK_MAX_VELOCITY..MOCK_MAX_VELOCITY);
+            let rand_acceleration =
+                rand::random_range(-MOCK_MAX_ACCELERATION..MOCK_MAX_ACCELERATION);
 
             {
                 let mut live_data = backend_data.lock().unwrap();
@@ -227,6 +223,9 @@ fn demo_levitation(backend_data: Arc<Mutex<BackendData>>) -> () {
     thread::scope(|s| {
         // ask for input and lock demo loop
         s.spawn(|| {
+            print!("\x1B[2J\x1B[H");
+            let _ = io::stdout().flush();
+            println!("Press Enter to stop simulation...");
             while let Ok(event) = event::read() {
                 if matches!(event, Event::Key(_)) {
                     stop.store(true, Ordering::Relaxed);
@@ -235,30 +234,33 @@ fn demo_levitation(backend_data: Arc<Mutex<BackendData>>) -> () {
             }
         });
 
-        // print console
-        s.spawn(|| {
-            // update data
-            while !stop.load(Ordering::Relaxed) {
-                println!("Press Enter to stop simulation...");
+        // start levitation
+        while !stop.load(Ordering::Relaxed) && loc_levitation < MOCK_MAX_LEVITATION_MM {
+            loc_levitation += 0.5;
 
-                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
-
-                print!("\x1B[2J\x1B[H");
-                let _ = io::stdout().flush();
-            }
-        });
-
-        while !stop.load(Ordering::Relaxed) {
-            if loc_levitation <= MOCK_MAX_LEVITATION_MM {
-                loc_levitation += 1.0;
-            }
             {
                 let mut live_data = backend_data.lock().unwrap();
                 live_data.levitation_mm = loc_levitation;
                 live_data.acceleration_kmh = 0.0;
                 live_data.speed_kmh = 0.0;
             }
-            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE)); // for performance reasons
+            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE));
+        }
+
+        let mut clock: f32 = 0.0;
+        // do levitation offset
+        while !stop.load(Ordering::Relaxed) {
+            loc_levitation += clock.cos() * MOCK_LEVITATION_OFFSET_MM;
+
+            {
+                let mut live_data = backend_data.lock().unwrap();
+                live_data.levitation_mm = loc_levitation;
+                live_data.acceleration_kmh = 0.0;
+                live_data.speed_kmh = 0.0;
+            }
+
+            clock += 1.0;
+            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE));
         }
     });
 }
@@ -271,6 +273,9 @@ fn demo_oscilation(backend_data: Arc<Mutex<BackendData>>) -> () {
     let stop = AtomicBool::new(false);
 
     thread::scope(|s| {
+        print!("\x1B[2J\x1B[H");
+        let _ = io::stdout().flush();
+        println!("Press Enter to stop simulation...");
         // ask for input and lock demo loop
         s.spawn(|| {
             while let Ok(event) = event::read() {
@@ -278,18 +283,6 @@ fn demo_oscilation(backend_data: Arc<Mutex<BackendData>>) -> () {
                     stop.store(true, Ordering::Relaxed);
                     break;
                 }
-            }
-        });
-
-        // print console
-        s.spawn(|| {
-            // update data
-            while !stop.load(Ordering::Relaxed) {
-                println!("Press Enter to stop simulation...");
-
-                thread::sleep(Duration::from_millis(MOCK_SEND_RATE));
-                print!("\x1B[2J\x1B[H");
-                let _ = io::stdout().flush();
             }
         });
 
@@ -327,6 +320,49 @@ fn demo_oscilation(backend_data: Arc<Mutex<BackendData>>) -> () {
                 live_data.acceleration_kmh = loc_acceleration;
                 live_data.speed_kmh = loc_speed;
             }
+
+            thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE));
+        }
+    });
+}
+
+fn demo_fullspeed(backend_data: Arc<Mutex<BackendData>>) -> () {
+    let loc_levitation: f32 = MOCK_MAX_LEVITATION_MM;
+    let mut loc_speed: f32 = 0.0;
+    let mut loc_acceleration = 0.0;
+
+    let stop = AtomicBool::new(false);
+
+    thread::scope(|s| {
+        // ask for input and lock demo loop
+        s.spawn(|| {
+            print!("\x1B[2J\x1B[H");
+            let _ = io::stdout().flush();
+            println!("Press Enter to stop simulation...");
+
+            while let Ok(event) = event::read() {
+                if matches!(event, Event::Key(_)) {
+                    stop.store(true, Ordering::Relaxed);
+                    break;
+                }
+            }
+        });
+
+        // main demo loop
+        while !stop.load(Ordering::Relaxed) {
+            loc_acceleration += MOCK_ACCELERATION_RATE;
+            loc_acceleration =
+                loc_acceleration.clamp(-MOCK_MAX_ACCELERATION, MOCK_MAX_ACCELERATION);
+            loc_speed += loc_acceleration;
+            loc_speed = loc_speed.clamp(0.0, MOCK_MAX_FULL_SPEED);
+
+            {
+                let mut live_data = backend_data.lock().unwrap();
+                live_data.levitation_mm = loc_levitation;
+                live_data.acceleration_kmh = loc_acceleration;
+                live_data.speed_kmh = loc_speed;
+            }
+
             thread::sleep(Duration::from_millis(MOCK_UPDATE_RATE));
         }
     });

@@ -42,7 +42,7 @@ public class CameraController : MonoBehaviour
         sceneCount       = sceneSettings.Length;
         cameraFocusPoint = podPosition.position;
 
-        TransitionToNewscene(0);
+        //TransitionToNewscene(0);
     }
 
     /*
@@ -59,8 +59,6 @@ public class CameraController : MonoBehaviour
         lockInTransition = true;  // se bloquea la transición
 
         int sceneIndex = findSceneSettings(sceneId);
-
-        Debug.Log(sceneSettings[sceneIndex].name);
 
         //lerp to new position
         StartCoroutine(OscilateToPos(

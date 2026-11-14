@@ -26,7 +26,7 @@ struct BackendData {
     speed_kmh: f32,
 }
 
-const REFRESH_RATE: u64 = 200;
+const REFRESH_RATE: u64 = 10;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {

@@ -33,6 +33,11 @@ public class SceneController : MonoBehaviour
     [SerializeField]
     private Transform podPosition;
 
+    [SerializeField]
+    private CameraController cameraController;
+    
+    [SerializeField]
+    private GameObject railT;
     [Space(10)]
     [Header("MOCK SIMULATION DATA")]
 
@@ -84,18 +89,22 @@ public class SceneController : MonoBehaviour
         mockPodVelocity = 0.0f;
 
         mockPodInitialPosition = new Vector3(podPosition.position.x, podPosition.position.y, podPosition.position.z);
+
         udpClient = GetComponent<UDPClient>();
-        TransitionToNewScene(0);
+        udpClient.ConnectToProvider(providerIP, providerPort, refreshRate_ms); // SOLO PARA LA MAQUETA
+
+        StartCoroutine(EnterSimulationLoop());
     }
 
+    /*
     public void TransitionToNewScene(int sceneId)
     {
         StartCoroutine(HandleNewScene(sceneId));
     }
 
+  
     private IEnumerator HandleNewScene(int sceneId)
     {
-
         // unlok scene and wait for last scene to end
         lockInScene = false;
         while (!lockExitedScene){
@@ -108,12 +117,13 @@ public class SceneController : MonoBehaviour
         currentSceneId = sceneId;
 
     }
-
+  
+    
     private void HandleScene(SceneNames sceneId)
-    {
+    { 
         switch (sceneId)
         {
-          /*
+ 
             case SceneNames.PARADO:
                 StartCoroutine(StoppedSceneLoop());
                 break;
@@ -126,20 +136,48 @@ public class SceneController : MonoBehaviour
             case SceneNames.SIMULATION:
                 StartCoroutine(SimulationSceneLoop());
                 break;
-          */
+          
+        }
+    }
+    */
 
 
+    // FOR MAQUETA ONLY
+    private IEnumerator EnterSimulationLoop()
+    {
+      while (true) {
+        yield return StartCoroutine(HandleScene_maqueta((SceneNames) udpClient.liveData.demo_id));
+      }
+    }
+
+
+    private IEnumerator HandleScene_maqueta(SceneNames sceneId)
+    {
+
+        cameraController.TransitionToNewscene((int)udpClient.liveData.demo_id);
+        switch (sceneId)
+        {
+          case SceneNames.PARADO:
+            while (udpClient.liveData.demo_id == 0){
+
+              yield return new WaitForSeconds(.1f);
+            }
+            break;
           case SceneNames.TEST:
-            StartCoroutine(SimulationDemo_test);
+            yield return StartCoroutine(SimulationDemo_test());
             break;
           case SceneNames.LEVITANDO:
-            StartCoroutine(SimulationDemo_levitation);
+            yield return StartCoroutine(SimulationDemo_levitation());
             break;
           case SceneNames.OSCILANDO:
-            S
-
-            
+            yield return StartCoroutine(SimulationDemo_oscilation());
+            break;
+          case SceneNames.FULLVEL:
+            yield return StartCoroutine(SimulationDemo_fullSpeed());
+            break;
         }
+
+
     }
 
     // SCENES //
@@ -156,6 +194,7 @@ public class SceneController : MonoBehaviour
     //  - lockExitedScene locks the scene until the exit rutine is completed, this allows the last
     //    scene to complete before a new scene is set
 
+    
     private IEnumerator StoppedSceneLoop()
     {
         StartCoroutine(LerpToPos(mockPodInitialPosition));
@@ -202,12 +241,10 @@ public class SceneController : MonoBehaviour
         }
         lockExitedScene = true;
     }
-
-
+  
     private IEnumerator SimulationSceneLoop()
     {
         StartCoroutine(LerpToPos(mockPodInitialPosition));
-
 
         udpClient.ConnectToProvider(providerIP, providerPort, refreshRate_ms);
         lockInScene = true;
@@ -224,22 +261,6 @@ public class SceneController : MonoBehaviour
         lockExitedScene = true;
     }
 
-    
-    private void SimulationDemo_test()
-    {
-          Debug.Log("Speed: " + udpClient.liveData.speed_kmh + "Levitation: " + udpClient.liveData.levitation_mm);
-    }
-
-    private void SimulationDemo_levitation()
-    {
-
-    }
-
-    private void SimulationDemo_oscilation()
-    {
-      
-
-    }
 
     private IEnumerator LerpToPos(Vector3 targetPos)
     {
@@ -255,5 +276,85 @@ public class SceneController : MonoBehaviour
             podPosition.position = Vector3.Lerp(initialPosition, targetPos, progress);
             yield return null;
         }
+    }
+
+
+
+
+
+
+
+
+    // MAQUETA ONLY
+    
+    private IEnumerator SimulationDemo_test()
+    {
+      uint current_scene = udpClient.liveData.demo_id;
+      while (current_scene == udpClient.liveData.demo_id)
+      {
+        Debug.Log($"Velocity: [{udpClient.liveData.speed_kmh}]\nAcceleration: [{udpClient.liveData.acceleration_kmh}]\nLevitation_mm[{udpClient.liveData.levitation_mm}]");
+        yield return null;
+      }
+    
+      yield return StartCoroutine(LerpToPos(mockPodInitialPosition));
+
+    }
+
+
+
+    private IEnumerator SimulationDemo_levitation()
+    {
+      uint current_scene = udpClient.liveData.demo_id;
+      while (current_scene == udpClient.liveData.demo_id)
+      {
+        podPosition.position = new Vector3(0.0f, mockPodInitialPosition.y + udpClient.liveData.levitation_mm/1000.0f, 0.0f);
+        yield return null;
+      }
+
+      yield return StartCoroutine(LerpToPos(mockPodInitialPosition));
+    }
+
+
+
+    private IEnumerator SimulationDemo_oscilation()
+    {
+      uint current_scene = udpClient.liveData.demo_id;
+  
+      yield return StartCoroutine(LerpToPos(new Vector3(mockPodInitialPosition.x, mockPodInitialPosition.y, mockPodInitialPosition.z + 15.0f)));
+
+      // check that velocity is positive (accelerating) 
+      while (udpClient.liveData.demo_id == current_scene) 
+      {
+        float last_velocity = udpClient.liveData.speed_kmh;
+        yield return new WaitForSeconds(0.1f);
+        if (last_velocity - udpClient.liveData.speed_kmh < 0)
+        {
+          break;
+        }
+      }
+
+
+      while (current_scene == udpClient.liveData.demo_id)
+      {
+        float curr_position_offset = podPosition.position.z + udpClient.liveData.speed_kmh * Time.deltaTime;
+        Debug.Log($"movement Offset x :[{curr_position_offset}]");
+        podPosition.position = new Vector3(0.0f, mockPodInitialPosition.y + udpClient.liveData.levitation_mm/1000.0f, curr_position_offset);
+        yield return null;
+      }
+
+      yield return StartCoroutine(LerpToPos(mockPodInitialPosition));
+    }
+
+    private IEnumerator SimulationDemo_fullSpeed(){
+      uint current_scene = udpClient.liveData.demo_id;
+
+      while (udpClient.liveData.demo_id == current_scene)
+      {
+
+        yield return null;
+      }
+
+      yield return StartCoroutine(LerpToPos(mockPodInitialPosition));
+
     }
 }

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: "Simulaci\xF3n_oscilaci\xF3n"
   m_EditorClassIdentifier: Assembly-CSharp::SceneData
   sceneId: 3
-  sceneName: "Oscilaci\xF3n"
-  cameraDistanceToFocusPoint: 10
+  sceneName: "Oscilaci\xF3n (maqueta)"
+  cameraDistanceToFocusPoint: 30
   cameraFOV: 60
-  camearAngleX: 80
-  cameraAngleY: 70
+  camearAngleX: 40
+  cameraAngleY: 90
